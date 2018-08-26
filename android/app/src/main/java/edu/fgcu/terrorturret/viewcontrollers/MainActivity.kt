@@ -1,7 +1,8 @@
-package edu.fgcu.terrorturret
+package edu.fgcu.terrorturret.viewcontrollers
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import edu.fgcu.terrorturret.R
 
 class MainActivity : AppCompatActivity() {
 
