@@ -1,3 +1,9 @@
 <resources>
+
+    <!-- General app strings -->
     <string name="app_name">TerrorTurret</string>
+
+    <!-- Button names -->
+    <string name="btn_okay">Okay</string>
+
 </resources>
