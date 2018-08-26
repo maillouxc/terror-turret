@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# In obfuscated code, fields with different types can have the same names, and
+# AtomicReferenceFieldUpdater may be unable to find the correct ones. To avoid field overloading by
+# type during obfuscation, we apply this rule.
+-keepclassmembernames class kotlinx.** {
+    volatile <fields>;
+}

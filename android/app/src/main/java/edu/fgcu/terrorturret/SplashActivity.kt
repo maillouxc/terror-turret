@@ -3,7 +3,6 @@ package edu.fgcu.terrorturret
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
@@ -33,14 +32,14 @@ class SplashActivity : AppCompatActivity() {
      */
     private fun goToMainActivityAfterSlightDelay() {
         launch(UI) {
-            finish()
             delay(SPLASH_DURATION_MS)
+            finish()
             startActivity(Intent(this@SplashActivity, MainActivity::class.java))
         }
     }
 
     companion object {
-        private const val SPLASH_DURATION_MS = 1000
+        private const val SPLASH_DURATION_MS = 1500
     }
 
 }
