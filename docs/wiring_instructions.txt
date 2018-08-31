@@ -1,0 +1,23 @@
+This file contains a description of the assumed wiring of the turret,
+which is neccessary information when programming it.
+
+// TODO finish filling out this file with instructions on hardware setup
+
+Geekduino board should be set via switch to '5V'.
+Geekduino board should be set via switch to AUTO.
+
+Laser is connected to pins [INSERT WIRING HERE].
+
+Pan servo is connected to pins [INSERT WIRING HERE].
+Tilt servo is connected to pins [INSERT WIRING HERE].
+
+// TODO instruction on fire control
+
+// TODO instructions on analog stick
+
+// TODO instructions on button
+
+// TODO instructions on power supplies
+
+// TODO insert link to official online documentation.
+
