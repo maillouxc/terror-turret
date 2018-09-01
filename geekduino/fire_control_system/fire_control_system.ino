@@ -70,7 +70,9 @@ void setup() {
  * Code in this method will run repeatedly.
  */
 void loop() {
-  /* TODO */
+  ensureServoPositionsAreWithinAllowedRange();
+  panServo.write(panValue);
+  panServo.write(tiltValue);
 }
 
 void setupPins() {
@@ -102,6 +104,13 @@ void setLaserOn(bool laserOn) {
   } else {
     digitalWrite(LASER_PIN, LOW);
   }
+}
+
+void ensureServoPositionsAreWithinAllowedRange() {
+  panValue = max(panValue, PAN_MIN_DEGREES);
+  panValue = min(panValue, PAN_MAX_DEGREES);
+  tiltValue = max(tiltValue, TILT_MIN_DEGREES);
+  tiltValue = max(tiltValue, TILT_MAX_DEGREES);
 }
 
 void fire() {
