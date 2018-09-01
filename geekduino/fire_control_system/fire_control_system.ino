@@ -56,11 +56,17 @@ int panValue = 90;
 int tiltValue = 90;
 bool isSafetyOn = true;
 int laserState = LOW;
+int buttonState = LOW;
+int lastButtonState = LOW;
+
+long lastDebounceTime = 0;
+int debounceDelay = 50;
 
 /**
  * Code in this method will run when the board is first powered.
  */
-void setup() {
+void setup() 
+{
   setupPins();
   engageSafety();
   moveServosToInitialPosition();
@@ -69,51 +75,79 @@ void setup() {
 /**
  * Code in this method will run repeatedly.
  */
-void loop() {
+void loop() 
+{
+  readAndDebounceButton();
   ensureServoPositionsAreWithinAllowedRange();
   panServo.write(panValue);
   panServo.write(tiltValue);
 }
 
-void setupPins() {
+void setupPins() 
+{
   panServo.attach(PAN_SERVO_PIN);
   tiltServo.attach(TILT_SERVO_PIN);
+  pinMode(PUSHBUTTON_PIN, INPUT);
   pinMode(LASER_PIN, OUTPUT);
 }
 
-void moveServosToInitialPosition() {
+void moveServosToInitialPosition() 
+{
   panServo.write(panValue);
   delay(1000);
   tiltServo.write(tiltValue);
   delay(1000);
 }
 
-void engageSafety() {
+void engageSafety() 
+{
   isSafetyOn = true;
   setLaserOn(false);
 }
 
-void disengageSafety() {
+void disengageSafety() 
+{
   isSafetyOn = false;
   setLaserOn(true);
 }
 
-void setLaserOn(bool laserOn) {
+void setLaserOn(bool laserOn) 
+{
   if (laserOn) {
     digitalWrite(LASER_PIN, HIGH);
-  } else {
+  } 
+  else {
     digitalWrite(LASER_PIN, LOW);
   }
 }
 
-void ensureServoPositionsAreWithinAllowedRange() {
+void ensureServoPositionsAreWithinAllowedRange() 
+{
   panValue = max(panValue, PAN_MIN_DEGREES);
   panValue = min(panValue, PAN_MAX_DEGREES);
   tiltValue = max(tiltValue, TILT_MIN_DEGREES);
   tiltValue = max(tiltValue, TILT_MAX_DEGREES);
 }
 
-void fire() {
+void readAndDebounceButton() 
+{
+  int reading = digitalRead(PUSHBUTTON_PIN);
+  if (reading != lastButtonState) {
+    lastDebounceTime = millis();
+  }
+
+  long timeSinceStateChange = millis() - lastDebounceTime;
+  if (timeSinceStateChange > debounceDelay) {
+    if (reading != buttonState) {
+      // Button is now debounced, so reading should be the correct state
+      buttonState = reading;
+    }
+  }
+  lastButtonState = reading;
+}
+
+void fire() 
+{
   if (isSafetyOn) {
     return;
   }
