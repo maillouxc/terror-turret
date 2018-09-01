@@ -40,7 +40,7 @@ const int JOY_DEADZONE_Y_HIGH = 540;
 const int DEBOUNCE_DELAY_MS = 50;
 
 // Needed to compensate for servo centered position being slightly wrong
-const int TURRET_PITCH_CALIBRATION_MICROSECONDS = 100;
+const int TURRET_PITCH_CALIBRATION_MICROSECONDS = 120;
 
 const int JOY_MIN_VALUE = 0;
 const int JOY_MAX_VALUE = 1023;
@@ -67,6 +67,8 @@ const int INITIAL_PAN_VALUE_MICROSECS = 1500; // Centered
 const int INITIAL_TILT_VALUE_MICROSECS = 1500; // Centered
 
 const int MAX_SERVO_SPEED = 10; // Should be between 5 and 500
+
+const int SERIAL_DEBUG_BAUD_RATE = 9600;
 /***********************************************************************************/
 
 int degreesToMicrosecs(unsigned int);
@@ -95,6 +97,9 @@ long lastDebounceTime = 0;
 */
 void setup()
 {
+  // Enable serial debugging so we can have print statements
+  Serial.begin(SERIAL_DEBUG_BAUD_RATE);
+  
   setupPins();
   engageSafety();
   moveServosToInitialPosition();
@@ -105,17 +110,22 @@ void setup()
 */
 void loop()
 {
-  startOrStopFiringBasedOnButtonState();
-  readAnalogSticksAndSetDesiredServoPositions();
-  ensureDesiredServoPositionsAreInAllowedRange();
-  panServo.writeMicroseconds(panValueMicrosecs);
-  panServo.writeMicroseconds(tiltValueMicrosecs);
+  //startOrStopFiringBasedOnButtonState();
+  //readAnalogSticksAndSetDesiredServoPositions();
+  //ensureDesiredServoPositionsAreInAllowedRange();
+  //panServo.writeMicroseconds(panValueMicrosecs);
+  //panServo.writeMicroseconds(tiltValueMicrosecs);
   delay(15);
 }
 
 void setupPins()
 {
-  panServo.attach(PAN_SERVO_PIN, SERVO_MIN_MICROSECS, SERVO_MAX_MICROSECS);
+  // Calling write here is technically wrong but it stops the intial autocentering
+  // We want to handle the centering ourselves
+  panServo.writeMicroseconds(0);
+  tiltServo.writeMicroseconds(0);
+  
+  panServo.attach(PAN_SERVO_PIN, SERVO_MIN_MICROSECS, SERVO_MAX_MICROSECS); 
   tiltServo.attach(TILT_SERVO_PIN, SERVO_MIN_MICROSECS, SERVO_MAX_MICROSECS);
 
   pinMode(PUSHBUTTON_PIN, INPUT);
@@ -125,7 +135,7 @@ void setupPins()
 void moveServosToInitialPosition()
 {
   panServo.writeMicroseconds(panValueMicrosecs);
-  delay(1000);
+  tiltValueMicrosecs -= TURRET_PITCH_CALIBRATION_MICROSECONDS;
   tiltServo.writeMicroseconds(tiltValueMicrosecs);
   delay(1000);
 }
