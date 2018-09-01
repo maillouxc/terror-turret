@@ -33,14 +33,12 @@ const int HORIZONTAL_JOY_PIN = 0;
 const int VERTICAL_JOY_PIN = 1;
 
 // Input handling related adjustable constants
-const int JOY_DEADZONE_X_LOW = 480;
-const int JOY_DEADZONE_X_HIGH = 540;
-const int JOY_DEADZONE_Y_LOW = 480;
-const int JOY_DEADZONE_Y_HIGH = 540;
+const int JOY_DEADZONE_LOW = 150;
+const int JOY_DEADZONE_HIGH = 540;
 const int DEBOUNCE_DELAY_MS = 50;
 
 // Needed to compensate for servo centered position being slightly wrong
-const int TURRET_PITCH_CALIBRATION_MICROSECONDS = 120;
+const int TURRET_PITCH_CALIBRATION = 120;
 
 const int JOY_MIN_VALUE = 0;
 const int JOY_MAX_VALUE = 1023;
@@ -50,41 +48,31 @@ const int JOY_MAX_VALUE = 1023;
 // range, so the min value here represents 0 degrees and the max represents 180.
 // Note that the actual allowed range of motion is limited by our code to prevent
 // the gun from hitting the turret itself, plus a few other reasons.
-const int SERVO_MIN_MICROSECS = 600;
-const int SERVO_MAX_MICROSECS = 2400;
-const int SERVO_MIN_DEGREES = 0;
-const int SERVO_MAX_DEGREES = 180;
+const int SERVO_MIN = 600;
+const int SERVO_MAX = 2400;
 
 // Turret movement constraint settings
 // These determine where the turret is ALLOWED to move, NOT where it CAN move.
-// Note that 90 degrees is centered
-const int PAN_MIN_DEGREES = 0;
-const int PAN_MAX_DEGREES = 180;
-const int TILT_MIN_DEGREES = 45;
-const int TILT_MAX_DEGREES = 135;
+const int PAN_MIN = 600;
+const int PAN_MAX = 2400;
+const int TILT_MIN = 600;
+const int TILT_MAX = 2400;
 
-const int INITIAL_PAN_VALUE_MICROSECS = 1500; // Centered
-const int INITIAL_TILT_VALUE_MICROSECS = 1500; // Centered
+const int INITIAL_PAN_VALUE = 1500; // Centered
+const int INITIAL_TILT_VALUE = 1500; // Centered
 
 const int MAX_SERVO_SPEED = 10; // Should be between 5 and 500
 
 const int SERIAL_DEBUG_BAUD_RATE = 9600;
 /***********************************************************************************/
 
-int degreesToMicrosecs(unsigned int);
-
 // Servo objects used to control the servos
 Servo panServo;
 Servo tiltServo;
 
-int panMinMicrosecs = degreesToMicrosecs(PAN_MIN_DEGREES);
-int panMaxMicrosecs = degreesToMicrosecs(PAN_MAX_DEGREES);
-int tiltMinMicrosecs = degreesToMicrosecs(TILT_MIN_DEGREES);
-int tiltMaxMicrosecs = degreesToMicrosecs(TILT_MAX_DEGREES);
-
 // Current state variables for the turret
-int panValueMicrosecs = INITIAL_PAN_VALUE_MICROSECS;
-int tiltValueMicrosecs = INITIAL_TILT_VALUE_MICROSECS;
+int panValue = INITIAL_PAN_VALUE;
+int tiltValue = INITIAL_TILT_VALUE;
 
 bool isSafetyOn = true;
 int laserState = LOW;
@@ -110,11 +98,11 @@ void setup()
 */
 void loop()
 {
-  //startOrStopFiringBasedOnButtonState();
-  //readAnalogSticksAndSetDesiredServoPositions();
-  //ensureDesiredServoPositionsAreInAllowedRange();
-  //panServo.writeMicroseconds(panValueMicrosecs);
-  //panServo.writeMicroseconds(tiltValueMicrosecs);
+  startOrStopFiringBasedOnButtonState();
+  readAnalogSticksAndSetDesiredServoPositions();
+  ensureDesiredServoPositionsAreInAllowedRange();
+  panServo.writeMicroseconds(panValue);
+  tiltServo.writeMicroseconds(tiltValue);
   delay(15);
 }
 
@@ -125,8 +113,8 @@ void setupPins()
   panServo.writeMicroseconds(0);
   tiltServo.writeMicroseconds(0);
   
-  panServo.attach(PAN_SERVO_PIN, SERVO_MIN_MICROSECS, SERVO_MAX_MICROSECS); 
-  tiltServo.attach(TILT_SERVO_PIN, SERVO_MIN_MICROSECS, SERVO_MAX_MICROSECS);
+  panServo.attach(PAN_SERVO_PIN, SERVO_MIN, SERVO_MAX); 
+  tiltServo.attach(TILT_SERVO_PIN, SERVO_MIN, SERVO_MAX);
 
   pinMode(PUSHBUTTON_PIN, INPUT);
   pinMode(LASER_PIN, OUTPUT);
@@ -134,9 +122,9 @@ void setupPins()
 
 void moveServosToInitialPosition()
 {
-  panServo.writeMicroseconds(panValueMicrosecs);
-  tiltValueMicrosecs -= TURRET_PITCH_CALIBRATION_MICROSECONDS;
-  tiltServo.writeMicroseconds(tiltValueMicrosecs);
+  panServo.writeMicroseconds(panValue);
+  tiltValue -= TURRET_PITCH_CALIBRATION;
+  tiltServo.writeMicroseconds(tiltValue);
   delay(1000);
 }
 
@@ -166,24 +154,24 @@ void readAnalogSticksAndSetDesiredServoPositions()
   int speed = MAX_SERVO_SPEED;
 
   // Handle pan
-  if (horizontalJoyValue < JOY_DEADZONE_X_LOW
-      || horizontalJoyValue > JOY_DEADZONE_X_HIGH) {
-    panValueMicrosecs += (1.0 * map(horizontalJoyValue, 0, 1023, -speed, speed));
+  if (horizontalJoyValue < JOY_DEADZONE_LOW
+      || horizontalJoyValue > JOY_DEADZONE_HIGH) {
+    panValue += (1.0 * map(horizontalJoyValue, 0, 1023, -speed, speed));
   }
 
   // Handle tilt
-  if (verticalJoyValue < JOY_DEADZONE_Y_LOW
-      || verticalJoyValue > JOY_DEADZONE_Y_HIGH) {
-    tiltValueMicrosecs += (1.0 * map(verticalJoyValue, 0, 1023, -speed, speed));
+  if (verticalJoyValue < JOY_DEADZONE_LOW
+      || verticalJoyValue > JOY_DEADZONE_HIGH) {
+    tiltValue += (1.0 * map(verticalJoyValue, 0, 1023, -speed, speed));
   }
 }
 
 void ensureDesiredServoPositionsAreInAllowedRange()
 {
-  panValueMicrosecs = max(panValueMicrosecs, panMinMicrosecs);
-  panValueMicrosecs = min(panValueMicrosecs, panMaxMicrosecs);
-  tiltValueMicrosecs = max(tiltValueMicrosecs, tiltMinMicrosecs);
-  tiltValueMicrosecs = min(tiltValueMicrosecs, tiltMaxMicrosecs);
+  panValue = max(panValue, PAN_MIN);
+  panValue = min(panValue, PAN_MAX);
+  tiltValue = max(tiltValue, TILT_MIN);
+  tiltValue = min(tiltValue, TILT_MAX);
 }
 
 int readAndDebounceButton()
@@ -216,15 +204,4 @@ void startOrStopFiringBasedOnButtonState()
     // Stop firing
     digitalWrite(TRIGGER_PIN, LOW);
   }
-}
-
-int degreesToMicrosecs(unsigned int angleDegrees)
-{
-  float microsecs = map(angleDegrees,
-                        SERVO_MIN_MICROSECS,
-                        SERVO_MAX_MICROSECS,
-                        SERVO_MIN_DEGREES,
-                        SERVO_MAX_DEGREES);
-
-  return round(microsecs);
 }
