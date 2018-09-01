@@ -55,8 +55,8 @@ const int SERVO_MAX = 2400;
 // These determine where the turret is ALLOWED to move, NOT where it CAN move.
 const int PAN_MIN = 600;
 const int PAN_MAX = 2400;
-const int TILT_MIN = 600;
-const int TILT_MAX = 2400;
+const int TILT_MIN = 900;
+const int TILT_MAX = 2000;
 
 const int INITIAL_PAN_VALUE = 1500; // Centered
 const int INITIAL_TILT_VALUE = 1500; // Centered
