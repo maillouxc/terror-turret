@@ -124,9 +124,9 @@ void setupPins()
 
 void moveServosToInitialPosition()
 {
-  panServo.write(panValueMicrosecs);
+  panServo.writeMicroseconds(panValueMicrosecs);
   delay(1000);
-  tiltServo.write(tiltValueMicrosecs);
+  tiltServo.writeMicroseconds(tiltValueMicrosecs);
   delay(1000);
 }
 
