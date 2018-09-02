@@ -6,5 +6,13 @@
 
     <!-- Common button names -->
     <string name="btn_okay">Okay</string>
+    <string name="btn_connect">Connect</string>
+
+    <!-- Form field labels -->
+    <string name="field_password">Password</string>
+    <string name="field_turret_ip">Turret IP Address</string>
+
+    <!-- Uncategorized strings -->
+    <string name="connect_to_turret">Connect to turret</string>
 
 </resources>

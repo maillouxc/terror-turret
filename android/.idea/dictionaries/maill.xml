@@ -2,6 +2,8 @@
   <dictionary name="maill">
     <words>
       <w>tagline</w>
+      <w>uncategorized</w>
+      <w>viewcontrollers</w>
     </words>
   </dictionary>
 </component>
