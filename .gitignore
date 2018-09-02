@@ -1,5 +1,6 @@
-# Gitignore file for the entire application #
-# Please try to keep things in this file organized and well commented #
+# Gitignore file for the entire application
+# Please try to keep things in this file organized and well commented
+# Prefer to use subproject specific .gitignore files instead of this
 
 # Executable files
 *.exe

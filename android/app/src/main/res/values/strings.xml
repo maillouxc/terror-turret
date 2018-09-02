@@ -1,0 +1,10 @@
+<resources>
+
+    <!-- General app strings -->
+    <string name="app_name">Terror Turret</string>
+    <string name="tagline">Be afraid</string>
+
+    <!-- Common button names -->
+    <string name="btn_okay">Okay</string>
+
+</resources>
