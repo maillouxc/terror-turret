@@ -9,6 +9,7 @@ object RobotController {
     private const val NUM_SPEED_SETTINGS = 10
 
     var isSafetyOn = true
+        private set
 
     fun fireZeMissiles() {
         if (!isSafetyOn) {
@@ -27,6 +28,12 @@ object RobotController {
     fun pitchTurretAtSpeed(speedLevel: Int) {
         validateSpeedSetting(speedLevel)
         // TODO pitch turret
+    }
+
+    fun engageSafety(safetyOn: Boolean) {
+        // TODO send command to the turret to engage or disengage safety
+
+        isSafetyOn = safetyOn
     }
 
     /**
