@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+
         <activity
             android:name=".viewcontrollers.SplashActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
@@ -24,8 +25,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".viewcontrollers.MainActivity" />
-        <activity android:name=".viewcontrollers.TurretControlActivity"></activity>
+        <activity
+            android:name=".viewcontrollers.MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".viewcontrollers.TurretControlActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="landscape"/>
+
     </application>
 
 </manifest>

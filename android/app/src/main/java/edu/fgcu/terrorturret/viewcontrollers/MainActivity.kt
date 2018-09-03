@@ -1,20 +1,17 @@
 package edu.fgcu.terrorturret.viewcontrollers
 
-import android.content.pm.ActivityInfo
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import edu.fgcu.terrorturret.R
 import edu.fgcu.terrorturret.applogic.RobotController
-import kotlinx.android.synthetic.main.layout_turret_connect.*
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_turret_connect)
+        setContentView(R.layout.activity_main)
         registerClickListeners()
     }
 
@@ -31,19 +28,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onConnected() {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        setContentView(R.layout.layout_turret_control)
+        // TODO implement
 
-        // TODO remove the temp testing code below
-        launch(UI) {
-            delay(5000)
-            onConnectionEnd()
-        }
+        // TODO remove test code
+        val turretControlIntent = Intent(this, TurretControlActivity::class.java)
+        startActivity(turretControlIntent)
     }
 
     private fun onConnectionEnd() {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        setContentView(R.layout.layout_turret_connect)
+        // TODO
     }
 
     private fun onClickFireButton() {
