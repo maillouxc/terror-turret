@@ -15,4 +15,7 @@
     <!-- Uncategorized strings -->
     <string name="connect_to_turret">Connect to turret</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
