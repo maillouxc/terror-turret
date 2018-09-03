@@ -29,8 +29,8 @@
         android:textOff="@string/safety_on"
         android:textOn="@string/safety_off"
         app:layout_constraintBottom_toBottomOf="@+id/video_view"
-        app:layout_constraintEnd_toStartOf="@+id/analog_stick"
-        app:layout_constraintStart_toEndOf="@+id/fire_button"
+        app:layout_constraintEnd_toEndOf="@+id/video_view"
+        app:layout_constraintStart_toStartOf="@+id/video_view"
         app:layout_constraintTop_toTopOf="@+id/video_view"
         app:layout_constraintVertical_bias="1.0" />
 
@@ -48,17 +48,35 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <Button
+    <com.jackandphantom.joystickview.JoyStickView
         android:id="@+id/analog_stick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
-        android:text="Button"
+        android:alpha="0.4"
+        app:innerCircleColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        app:outerCircleBorderColor="@color/white"
+        app:outerCircleBorderWidth="16"
+        app:outerCircleColor="@color/gray" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/video_view"
+        app:layout_constraintEnd_toEndOf="@+id/video_view"
+        app:layout_constraintStart_toStartOf="@+id/video_view"
+        app:layout_constraintTop_toTopOf="@+id/video_view"
+        app:srcCompat="@drawable/crosshair" />
 
 </android.support.constraint.ConstraintLayout>

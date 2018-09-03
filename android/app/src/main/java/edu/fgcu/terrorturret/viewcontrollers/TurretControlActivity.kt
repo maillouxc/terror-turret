@@ -3,6 +3,8 @@ package edu.fgcu.terrorturret.viewcontrollers
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import edu.fgcu.terrorturret.R
+import edu.fgcu.terrorturret.applogic.RobotController
+import kotlinx.android.synthetic.main.activity_turret_control.*
 
 class TurretControlActivity : AppCompatActivity() {
 
@@ -13,11 +15,14 @@ class TurretControlActivity : AppCompatActivity() {
     }
 
     private fun registerClickListeners() {
-        // TODO
+        fire_button.setOnClickListener { onClickFire() }
     }
 
     private fun onClickFire() {
-        // TODO
+        val weaponIsHot = !safety.isChecked
+        if (weaponIsHot) {
+            RobotController.fireZeMissiles()
+        }
     }
 
 }
