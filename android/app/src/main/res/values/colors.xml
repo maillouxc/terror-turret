@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Color palette -->
+    <color name="blackDark">#000000</color>
+    <color name="black">#212121</color>
+    <color name="gray">#484848</color>
+    <color name="redLight">#ff5131</color>
+    <color name="red">#d50000</color>
+    <color name="maroon">#9b0000</color>
+    <color name="white">#ffffff</color>
+
     <!-- Colors by usage -->
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">@color/black</color>
+    <color name="colorPrimaryDark">@color/blackDark</color>
+    <color name="colorPrimaryLight">@color/gray</color>
+    <color name="colorSecondary">@color/red</color>
+    <color name="colorSecondaryDark">@color/maroon</color>
+    <color name="colorSecondaryLight">@color/redLight</color>
+    <color name="colorTextOnPrimary">@color/white</color>
+    <color name="colorTextOnSecondary">@color/white</color>
 
 </resources>
