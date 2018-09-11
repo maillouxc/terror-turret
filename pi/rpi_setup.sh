@@ -59,8 +59,6 @@ echo "Installing pip package manager for Python..."
 sudo apt-get install python-pip || exiterror
 echo "Installing python-serial..."
 sudo apt-get install python-serial || exiterror
-echo "Installing pyfirmata..."
-sudo pip install pyfirmata || exiterror
 echo "Finished installing needed packages.\n"
 
 success
