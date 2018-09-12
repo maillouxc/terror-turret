@@ -1,19 +1,9 @@
 /************************************************************************************
    Fire control system for the Terror Turret.
  ************************************************************************************
-   Wiring is as follows:
-
-   Laser - Digital Pin 2
-   Pushbutton - Digital Pin 4
-   Trigger - Digital Pin 7
-   Pan Servo - Digital Pin 10
-   Tilt Servo - Digital Pin 11
-
-   Joystick (Horizontal) - Analog Pin 0
-   Joystick (Vertical) - Analog Pin 2
+   Wiring is described in the file `wiring_instructions.txt` in the docs folder.
 
    The joystick and button are only here for testing purposes at the moment.
-   This will eventually take its instructions from a Raspberry Pi.
  ***********************************************************************************/
 
 #include <Servo.h>
