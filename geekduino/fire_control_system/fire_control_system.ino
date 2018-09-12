@@ -118,16 +118,10 @@ void moveServosToInitialPosition()
   delay(1000);
 }
 
-void engageSafety()
+void setSafetyOn(bool safetyOn)
 {
-  isSafetyOn = true;
-  setLaserOn(false);
-}
-
-void disengageSafety()
-{
-  isSafetyOn = false;
-  setLaserOn(true);
+  isSafetyOn = safetyOn;
+  setLaserOn(!safetyOn);
 }
 
 void setLaserOn(bool laserOn)
