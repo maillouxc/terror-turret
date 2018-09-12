@@ -22,18 +22,18 @@ const int TILT_SERVO_PIN = 11;
 const int HORIZONTAL_JOY_PIN = 0;
 const int VERTICAL_JOY_PIN = 1;
 
-// Input handling related adjustable constants
+// Input handling related constants - adjustable
 const int JOY_DEADZONE_LOW = 150;
 const int JOY_DEADZONE_HIGH = 540;
 const int DEBOUNCE_DELAY_MS = 50;
 
+const int JOY_MIN_VALUE = 0;
+const int JOY_MAX_VALUE = 1024;
+
 // Needed to compensate for servo centered position being slightly wrong
 const int TURRET_PITCH_CALIBRATION = 120;
 
-const int JOY_MIN_VALUE = 0;
-const int JOY_MAX_VALUE = 1023;
-
-// These constants represent the microsecond pulse values defining the range of
+// These constants represent the microsecond PWM values defining the range of
 // motion for the type of servos we are using - the servos we use have a 180 degree
 // range, so the min value here represents 0 degrees and the max represents 180.
 // Note that the actual allowed range of motion is limited by our code to prevent
@@ -41,7 +41,7 @@ const int JOY_MAX_VALUE = 1023;
 const int SERVO_MIN = 600;
 const int SERVO_MAX = 2400;
 
-// Turret movement constraint settings
+// Turret movement constraints
 // These determine where the turret is ALLOWED to move, NOT where it CAN move.
 const int PAN_MIN = 600;
 const int PAN_MAX = 2400;
@@ -52,8 +52,9 @@ const int INITIAL_PAN_VALUE = 1500; // Centered
 const int INITIAL_TILT_VALUE = 1500; // Centered
 
 const int MAX_SERVO_SPEED = 10; // Should be between 5 and 500
+const int MAX_GUN_FIRING_TIME = 2000;
 
-const int SERIAL_DEBUG_BAUD_RATE = 9600;
+const int SERIAL_BAUD_RATE = 9600;
 /***********************************************************************************/
 
 // Servo objects used to control the servos
@@ -66,26 +67,28 @@ int tiltValue = INITIAL_TILT_VALUE;
 
 bool isSafetyOn = true;
 int laserState = LOW;
+
 int buttonState = LOW;
 int lastButtonState = LOW;
 long lastDebounceTime = 0;
 
+bool isFiring = false;
+int firingStartTime;
+
 /**
-   Code in this method will run when the board is first powered.
-*/
+ * Code in this method will run when the board is first powered.
+ */
 void setup()
 {
-  // Enable serial debugging so we can have print statements
-  Serial.begin(SERIAL_DEBUG_BAUD_RATE);
-  
+  Serial.begin(SERIAL_BAUD_RATE);
   setupPins();
   engageSafety();
   moveServosToInitialPosition();
 }
 
 /**
-   Code in this method will run repeatedly.
-*/
+ * Code in this method will run repeatedly.
+ */
 void loop()
 {
   startOrStopFiringBasedOnButtonState();
@@ -98,8 +101,8 @@ void loop()
 
 void setupPins()
 {
-  // Calling write here is technically wrong but it stops the intial autocentering
-  // We want to handle the centering ourselves
+  // Writing before attach is technically wrong but stops the intial autocentering
+  // We want to handle the centering ourselves, autocentering can damage the turret
   panServo.writeMicroseconds(0);
   tiltServo.writeMicroseconds(0);
   
@@ -118,6 +121,9 @@ void moveServosToInitialPosition()
   delay(1000);
 }
 
+/**
+ * When the safety is on, the laser will turn off and the weapon will not fire.
+ */
 void setSafetyOn(bool safetyOn)
 {
   isSafetyOn = safetyOn;
@@ -137,19 +143,23 @@ void readAnalogSticksAndSetDesiredServoPositions()
   int verticalJoyValue = analogRead(VERTICAL_JOY_PIN);
   int speed = MAX_SERVO_SPEED;
 
-  // Handle pan
   if (horizontalJoyValue < JOY_DEADZONE_LOW
       || horizontalJoyValue > JOY_DEADZONE_HIGH) {
-    panValue += (1.0 * map(horizontalJoyValue, 0, 1023, -speed, speed));
+    panValue += (1.0 * map(horizontalJoyValue, JOY_MIN_VALUE, JOY_MAX_VALUE, -speed, speed));
   }
 
-  // Handle tilt
-  if (verticalJoyValue < JOY_DEADZONE_LOW
+  if (verticalJoyValue < JOY_DEADZONE_LOW 
       || verticalJoyValue > JOY_DEADZONE_HIGH) {
-    tiltValue += (1.0 * map(verticalJoyValue, 0, 1023, -speed, speed));
+    tiltValue += (1.0 * map(verticalJoyValue, JOY_MIN_VALUE, JOY_MAX_VALUE, -speed, speed));
   }
 }
 
+/**
+ * Gates the pan and tilt servo position values to be within the allowed range.
+ * 
+ * The allowed range is determined based on several factors, most important of
+ * which is preventing the turret from hitting itself.
+ */
 void ensureDesiredServoPositionsAreInAllowedRange()
 {
   panValue = max(panValue, PAN_MIN);
@@ -179,13 +189,17 @@ int readAndDebounceButton()
 void startOrStopFiringBasedOnButtonState()
 {
   int reading = readAndDebounceButton();
-  if (reading == HIGH) {
-    // Begin firing
+  setIsFiring(reading == HIGH); 
+}
+
+void setIsFiring(bool fireWeapon) {
+  if (fireWeapon) {
     if (!isSafetyOn) {
       digitalWrite(TRIGGER_PIN, HIGH);
+      firingStartTime = millis();
     }
-  } else {
-    // Stop firing
+  }
+  else {
     digitalWrite(TRIGGER_PIN, LOW);
   }
 }
