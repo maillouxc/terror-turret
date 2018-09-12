@@ -41,7 +41,6 @@ const int TURRET_PITCH_CALIBRATION = 120;
 const int SERVO_MIN = 600;
 const int SERVO_MAX = 2400;
 
-// Turret movement constraints
 // These determine where the turret is ALLOWED to move, NOT where it CAN move.
 const int PAN_MIN = 600;
 const int PAN_MAX = 2400;
@@ -52,9 +51,40 @@ const int INITIAL_PAN_VALUE = 1500; // Centered
 const int INITIAL_TILT_VALUE = 1500; // Centered
 
 const int MAX_SERVO_SPEED = 10; // Should be between 5 and 500
+const int NUM_SPEED_LEVELS = 10;
 const int MAX_GUN_FIRING_TIME = 2000;
 
 const int SERIAL_BAUD_RATE = 9600;
+/***********************************************************************************/
+
+/************************************************************************************
+ Command-link serial protocol (CLSP)
+ ************************************************************************************
+ The following constants define the bytes that represent various commands that can
+ be sent to this FCS from the Raspberry Pi Turret Manager.
+
+ There is no particular reason that the bytes start at 0x21, other than that it is
+ the first non-whitespace, non-control ASCII character. We aren't considering these
+ commands to be ASCII characters, they are just numbers, but it's helpful for
+ debugging to have a simple printed character in the logs or wherever.
+
+ The rotation stuff is based on speed levels. There are 10 speed levels, so the
+ command CLSP_ROTATE_LEFT_MAX means rotate at speed -10, in other words turn left at 
+ max speed. These commands represent a range. So, CLSP_ROTATE_ZERO - 5 would tell
+ the turret to rotate left at speed 5. Negative speeds imply left rotation, and
+ positive speeds imply right rotation. The same logic can be applied to pitching.
+/***********************************************************************************/
+unsigned char CLSP_FIRE = 0x21;
+unsigned char CLSP_STOP_FIRE = 0x22;
+unsigned char CLSP_SAFETY_ON = 0x23;
+unsigned char CLSP_SAFETY_OFF = 0x24;
+unsigned char CLSP_REBOOT = 0x25; // Currently does nothing
+unsigned char CLSP_ROTATE_LEFT_MAX = 0x26;
+unsigned char CLSP_ROTATE_ZERO = 0x30;
+unsigned char CLSP_ROTATE_RIGHT_MAX = 0x3A;
+unsigned char CLSP_PITCH_DOWN_MAX = 0x3B;
+unsigned char CLSP_PITCH_ZERO = 0x45;
+unsigned char CLSP_PITCH_UP_MAX = 0x4F;
 /***********************************************************************************/
 
 // Servo objects used to control the servos
@@ -75,6 +105,9 @@ long lastDebounceTime = 0;
 bool isFiring = false;
 int firingStartTime;
 
+int horizontalSpeedLevel = 0;
+int verticalSpeedLevel = 0;
+
 /**
  * Code in this method will run when the board is first powered.
  */
@@ -91,6 +124,7 @@ void setup()
  */
 void loop()
 {
+  acceptSerialCommandsFromRPi();
   startOrStopFiringBasedOnButtonState();
   readAnalogSticksAndSetDesiredServoPositions();
   ensureDesiredServoPositionsAreInAllowedRange();
@@ -111,6 +145,14 @@ void setupPins()
 
   pinMode(PUSHBUTTON_PIN, INPUT);
   pinMode(LASER_PIN, OUTPUT);
+}
+
+void acceptSerialCommandsFromRPi()
+{
+  // First read all bytes from the serial buffer
+  while (Serial.available()) {
+    // TODO
+  }
 }
 
 void moveServosToInitialPosition()
@@ -192,7 +234,8 @@ void startOrStopFiringBasedOnButtonState()
   setIsFiring(reading == HIGH); 
 }
 
-void setIsFiring(bool fireWeapon) {
+void setIsFiring(bool fireWeapon) 
+{
   if (fireWeapon) {
     if (!isSafetyOn) {
       digitalWrite(TRIGGER_PIN, HIGH);
