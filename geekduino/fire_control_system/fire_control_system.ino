@@ -116,6 +116,7 @@ void loop()
 {
   acceptSerialCommandsFromRPi();
   stopFiringIfMaxBurstLengthExceeded();
+  calculateNewServoPositions();
   ensureDesiredServoPositionsAreInAllowedRange();
   panServo.writeMicroseconds(panValue);
   tiltServo.writeMicroseconds(tiltValue);
@@ -175,6 +176,12 @@ void moveServosToInitialPosition()
   tiltValue -= TURRET_PITCH_CALIBRATION;
   tiltServo.writeMicroseconds(tiltValue);
   delay(1000);
+}
+
+void calculateNewServoPositions()
+{
+  panValue += horizontalSpeedLevel;
+  tiltValue += verticalSpeedLevel;
 }
 
 /**
