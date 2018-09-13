@@ -3,7 +3,8 @@
  ************************************************************************************
    Wiring is described in the file `wiring_instructions.txt` in the docs folder.
 
-   The joystick and button are only here for testing purposes at the moment.
+   The only phyiscally attached control is the button, which engages the safety
+   when pressed.
  ***********************************************************************************/
 
 #include <Servo.h>
@@ -18,17 +19,7 @@ const int TRIGGER_PIN = 7;
 const int PAN_SERVO_PIN = 10;
 const int TILT_SERVO_PIN = 11;
 
-// Analog pin assignments
-const int HORIZONTAL_JOY_PIN = 0;
-const int VERTICAL_JOY_PIN = 1;
-
-// Input handling related constants - adjustable
-const int JOY_DEADZONE_LOW = 150;
-const int JOY_DEADZONE_HIGH = 540;
 const int DEBOUNCE_DELAY_MS = 50;
-
-const int JOY_MIN_VALUE = 0;
-const int JOY_MAX_VALUE = 1024;
 
 // Needed to compensate for servo centered position being slightly wrong
 const int TURRET_PITCH_CALIBRATION = 120;
@@ -50,7 +41,6 @@ const int TILT_MAX = 2000;
 const int INITIAL_PAN_VALUE = 1500; // Centered
 const int INITIAL_TILT_VALUE = 1500; // Centered
 
-const int MAX_SERVO_SPEED = 10; // Should be between 5 and 500
 const int NUM_SPEED_LEVELS = 10;
 const int MAX_GUN_FIRING_TIME = 2000;
 
@@ -58,7 +48,7 @@ const int SERIAL_BAUD_RATE = 9600;
 /***********************************************************************************/
 
 /************************************************************************************
- Command-link serial protocol (CLSP)
+ Command-link protocol
  ************************************************************************************
  The following constants define the bytes that represent various commands that can
  be sent to this FCS from the Raspberry Pi Turret Manager.
@@ -69,22 +59,22 @@ const int SERIAL_BAUD_RATE = 9600;
  debugging to have a simple printed character in the logs or wherever.
 
  The rotation stuff is based on speed levels. There are 10 speed levels, so the
- command CLSP_ROTATE_LEFT_MAX means rotate at speed -10, in other words turn left at 
- max speed. These commands represent a range. So, CLSP_ROTATE_ZERO - 5 would tell
+ command CMD_ROTATE_LEFT_MAX means rotate at speed -10, in other words turn left at 
+ max speed. These commands represent a range. So, CMD_ROTATE_ZERO - 5 would tell
  the turret to rotate left at speed 5. Negative speeds imply left rotation, and
  positive speeds imply right rotation. The same logic can be applied to pitching.
 /***********************************************************************************/
-unsigned char CLSP_FIRE = 0x21;
-unsigned char CLSP_STOP_FIRE = 0x22;
-unsigned char CLSP_SAFETY_ON = 0x23;
-unsigned char CLSP_SAFETY_OFF = 0x24;
-unsigned char CLSP_REBOOT = 0x25; // Currently does nothing
-unsigned char CLSP_ROTATE_LEFT_MAX = 0x26;
-unsigned char CLSP_ROTATE_ZERO = 0x30;
-unsigned char CLSP_ROTATE_RIGHT_MAX = 0x3A;
-unsigned char CLSP_PITCH_DOWN_MAX = 0x3B;
-unsigned char CLSP_PITCH_ZERO = 0x45;
-unsigned char CLSP_PITCH_UP_MAX = 0x4F;
+unsigned char CMD_FIRE = 0x21;
+unsigned char CMD_STOP_FIRE = 0x22;
+unsigned char CMD_SAFETY_ON = 0x23;
+unsigned char CMD_SAFETY_OFF = 0x24;
+unsigned char CMD_REBOOT = 0x25; // Currently does nothing
+unsigned char CMD_ROTATE_LEFT_MAX = 0x26;
+unsigned char CMD_ROTATE_ZERO = 0x30;
+unsigned char CMD_ROTATE_RIGHT_MAX = 0x3A;
+unsigned char CMD_PITCH_DOWN_MAX = 0x3B;
+unsigned char CMD_PITCH_ZERO = 0x45;
+unsigned char CMD_PITCH_UP_MAX = 0x4F;
 /***********************************************************************************/
 
 // Servo objects used to control the servos
@@ -103,7 +93,7 @@ int lastButtonState = LOW;
 long lastDebounceTime = 0;
 
 bool isFiring = false;
-int firingStartTime;
+long firingStartTime;
 
 int horizontalSpeedLevel = 0;
 int verticalSpeedLevel = 0;
@@ -113,10 +103,10 @@ int verticalSpeedLevel = 0;
  */
 void setup()
 {
-  Serial.begin(SERIAL_BAUD_RATE);
   setupPins();
-  engageSafety();
+  setSafetyOn(true);
   moveServosToInitialPosition();
+  Serial.begin(SERIAL_BAUD_RATE);
 }
 
 /**
@@ -125,8 +115,7 @@ void setup()
 void loop()
 {
   acceptSerialCommandsFromRPi();
-  startOrStopFiringBasedOnButtonState();
-  readAnalogSticksAndSetDesiredServoPositions();
+  stopFiringIfMaxBurstLengthExceeded();
   ensureDesiredServoPositionsAreInAllowedRange();
   panServo.writeMicroseconds(panValue);
   tiltServo.writeMicroseconds(tiltValue);
@@ -149,9 +138,34 @@ void setupPins()
 
 void acceptSerialCommandsFromRPi()
 {
-  // First read all bytes from the serial buffer
   while (Serial.available()) {
-    // TODO
+    processCommand(Serial.read());
+  }
+}
+
+void processCommand(unsigned char command)
+{
+  // First process the movement cmds, since they are a ranged values -10 through 10
+  if (command >= CMD_ROTATE_LEFT_MAX && command <= CMD_ROTATE_RIGHT_MAX) {
+    horizontalSpeedLevel = command - CMD_ROTATE_ZERO;
+  }
+  else if (command >= CMD_PITCH_DOWN_MAX && command <= CMD_PITCH_UP_MAX) {
+    verticalSpeedLevel = command - CMD_PITCH_ZERO;
+  }
+  else if (command == CMD_FIRE) {
+    setIsFiring(true);
+  }
+  else if (command == CMD_STOP_FIRE) {
+    setIsFiring(false);
+  }
+  else if (command == CMD_SAFETY_ON) {
+    setSafetyOn(true);
+  }
+  else if (command == CMD_SAFETY_OFF) {
+    setSafetyOn(false);
+  }
+  else if (command == CMD_REBOOT) {
+    reboot();
   }
 }
 
@@ -176,24 +190,6 @@ void setLaserOn(bool laserOn)
 {
   int pinValue = laserOn ? HIGH : LOW;
   digitalWrite(LASER_PIN, pinValue);
-}
-
-void readAnalogSticksAndSetDesiredServoPositions()
-{
-  // Analog stick values range between 0 and 1023
-  int horizontalJoyValue = analogRead(HORIZONTAL_JOY_PIN);
-  int verticalJoyValue = analogRead(VERTICAL_JOY_PIN);
-  int speed = MAX_SERVO_SPEED;
-
-  if (horizontalJoyValue < JOY_DEADZONE_LOW
-      || horizontalJoyValue > JOY_DEADZONE_HIGH) {
-    panValue += (1.0 * map(horizontalJoyValue, JOY_MIN_VALUE, JOY_MAX_VALUE, -speed, speed));
-  }
-
-  if (verticalJoyValue < JOY_DEADZONE_LOW 
-      || verticalJoyValue > JOY_DEADZONE_HIGH) {
-    tiltValue += (1.0 * map(verticalJoyValue, JOY_MIN_VALUE, JOY_MAX_VALUE, -speed, speed));
-  }
 }
 
 /**
@@ -228,21 +224,52 @@ int readAndDebounceButton()
   return buttonState;
 }
 
-void startOrStopFiringBasedOnButtonState()
+/**
+ * This helps prevent overheating the gun and damaging it.
+ */
+void stopFiringIfMaxBurstLengthExceeded()
 {
-  int reading = readAndDebounceButton();
-  setIsFiring(reading == HIGH); 
+  long currentBurstDuration = millis() - firingStartTime;
+  if (currentBurstDuration > MAX_GUN_FIRING_TIME) {
+    setIsFiring(false);
+  }
+}
+
+/**
+ * This provides a backup way to engage the safety if things start going crazy.
+ */
+void engageSafetyIfButtonPressed()
+{
+  int buttonReading = readAndDebounceButton();
+  bool buttonPressed = (buttonReading == HIGH);
+  if (buttonPressed) {
+    setSafetyOn(true);
+  }
 }
 
 void setIsFiring(bool fireWeapon) 
 {
+  // If we're already firing - just continue firing - no work needed
+  if (isFiring && fireWeapon) {
+    return;
+  }
+  
   if (fireWeapon) {
     if (!isSafetyOn) {
-      digitalWrite(TRIGGER_PIN, HIGH);
+      isFiring = true;
       firingStartTime = millis();
+      digitalWrite(TRIGGER_PIN, HIGH);
     }
   }
   else {
     digitalWrite(TRIGGER_PIN, LOW);
+    isFiring = false;
   }
+}
+
+/**
+ * Currently not implemented.
+ */
+void reboot() {
+  // TODO
 }
