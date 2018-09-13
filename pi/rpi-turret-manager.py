@@ -22,7 +22,7 @@ CMD_PITCH_UP_MAX = 0x4F
 arduinoSerialConn = serial.Serial(ARDUINO_SERIAL_CONN_PORT, SERIAL_BAUD_RATE)
 
 def main():
-    testTurretcommands()
+    testTurretCommands()
 
 def sendCommandToTurret(command):
     serial.write(command)
