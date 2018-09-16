@@ -24,7 +24,6 @@ SERIAL_BAUD_RATE = 9600
 turretSerialPort = '/dev/tty/USB0'
 
 arduinoSerialConn = "" 
-serial.Serial(ARDUINO_SERIAL_CONN_PORT, SERIAL_BAUD_RATE)
 
 
 def main():
@@ -33,7 +32,7 @@ def main():
     testTurretCommands()
 
 
-def establishConnectionToTurret()
+def establishConnectionToTurret():
     print("Available ports: ")
     for port in serial.tools.list_ports.comports():
         print(str(port))
