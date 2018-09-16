@@ -151,6 +151,9 @@ void acceptSerialCommandsFromRPi()
 
 void processCommand(unsigned char command)
 {
+  Serial.println("Command received");
+  Serial.println(command);
+  
   // First process the movement cmds, since they are a ranged values -10 through 10
   if (command >= CMD_ROTATE_LEFT_MAX && command <= CMD_ROTATE_RIGHT_MAX) {
     horizontalSpeedLevel = command - CMD_ROTATE_ZERO;
