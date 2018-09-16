@@ -34,7 +34,7 @@ success() {
   runtime=$((endtime - starttime))
   runtime_minutes=$((runtime/60))
   printf "SUCCESS after ${runtime} seconds (${runtime_minutes} minutes)."
-  printf "${OUTPUT_NOCOLOR}"
+  printf "${OUTPUT_NO_COLOR}"
   exit 0
 }
 
@@ -62,4 +62,3 @@ sudo apt-get install python-serial || exiterror
 echo "Finished installing needed packages.\n"
 
 success
-
