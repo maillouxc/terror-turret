@@ -4,9 +4,8 @@
 
 import serial
 from time import sleep
-
-ARDUINO_SERIAL_CONN_PORT = '/dev/tty/USB0'
-SERIAL_BAUD_RATE = 9600
+from colorama import Fore
+from colorama import Style
 
 CMD_FIRE = 0x21
 CMD_STOP_FIRE = 0x22
@@ -20,12 +19,35 @@ CMD_PITCH_DOWN_MAX = 0x3B
 CMD_PITCH_ZERO = 0x45
 CMD_PITCH_UP_MAX = 0x4F
 
-arduinoSerialConn = serial.Serial(ARDUINO_SERIAL_CONN_PORT, SERIAL_BAUD_RATE)
+SERIAL_BAUD_RATE = 9600
+
+turretSerialPort = '/dev/tty/USB0'
+
+arduinoSerialConn = "" 
+serial.Serial(ARDUINO_SERIAL_CONN_PORT, SERIAL_BAUD_RATE)
 
 
 def main():
     print("Turret manager software started.")
+    establishConnectionToTurret()
     testTurretCommands()
+
+
+def establishConnectionToTurret()
+    print("Available ports: ")
+    for port in serial.tools.list_ports.comports():
+        print(str(port))
+    print("")
+
+    # TODO we need a way to programatically determine which port the turret is on
+    # We'll have to use some sort of negotation, ping each port and listening for correct response
+
+    print("Attempting to connect to turret on " + turretSerialPort + ".")
+    try:
+        serial.Serial(turretSerialPort, SERIAL_BAUD_RATE)
+        print("Connection established")
+    except serial.SerialException:
+        crash("Failed to connect to turret on " + str(turretSerialPort))
 
 
 def commandTurret(command):
@@ -81,6 +103,11 @@ def testTurretCommands():
     comandTurret(CMD_SAFETY_ON)
 
     print("Test complete.")
+
+
+def crash(reason):
+    print(f'{Fore.RED}{reason}{Style.RESET_ALL}')
+    exit(1)
 
 
 if __name__ == "__main__":
