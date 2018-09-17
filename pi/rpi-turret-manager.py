@@ -60,53 +60,54 @@ def establishConnectionToTurret():
 
 
 def commandTurret(command):
-    arduinoSerialConn.write(str(command).encode())
+    print("Sending command: " + hex(command))
+    arduinoSerialConn.write(chr(command).encode())
     
 
 def testTurretCommands():
-    print("\nInitiating turret commands test...")
-    sleep(1)
+    print("\nInitiating turret commands test...\n")
+    sleep(5)
 
     print("Commanding SAFETY OFF")
     commandTurret(CMD_SAFETY_OFF)
-    sleep(2)
+    sleep(10)
 
     print("Commanding SAFETY ON")
     commandTurret(CMD_SAFETY_ON)
-    sleep(2)
+    sleep(10)
 
     print("Commanding SAFETY OFF")
     commandTurret(CMD_SAFETY_OFF)
-    sleep(1)
+    sleep(10)
 
     print("Firing for 1 second")
     commandTurret(CMD_FIRE)
     sleep(1)
     commandTurret(CMD_STOP_FIRE)
-    sleep(1)
+    sleep(10)
 
     print("Left at speed 7")
     commandTurret(CMD_ROTATE_ZERO - 7)
-    sleep(2)
+    sleep(10)
 
     print("Right at speed 3")
     commandTurret(CMD_ROTATE_ZERO + 3)
-    sleep(3)
+    sleep(10)
 
     print("Up at speed 10")
     commandTurret(CMD_PITCH_UP_MAX)
-    sleep(2)
+    sleep(10)
 
     print("Down at speed 1")
     commandTurret(CMD_PITCH_ZERO - 1)
-    sleep(5)
+    sleep(10)
 
     print("Testing moving and firing")
     commandTurret(CMD_ROTATE_ZERO + 3)
     commandTurret(CMD_FIRE)
     sleep(1)
     commandTurret(CMD_STOP_FIRE)
-    sleep(2)
+    sleep(10)
 
     print("Turning safety back on")
     commandTurret(CMD_SAFETY_ON)
@@ -120,7 +121,9 @@ def crash(reason):
 
 def SerialLoggingThread():
     while(1):
-        print("TURRET: " + str(arduinoSerialConn.readline(), "utf-8"))
+        turretOutput = str(arduinoSerialConn.readline(), "utf-8")
+        if turretOutput != "":
+            print("Turret: " + turretOutput)
 
 
 if __name__ == "__main__":

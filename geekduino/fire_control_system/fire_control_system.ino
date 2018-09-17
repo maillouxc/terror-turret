@@ -105,12 +105,12 @@ int verticalSpeedLevel = 0;
 void setup()
 {
   Serial.begin(SERIAL_BAUD_RATE);
-  Serial.println("Initializing");
+  Serial.print("Initializing");
   setupPins();
   setSafetyOn(true);
   moveServosToInitialPosition();
-  Serial.println("Init complete");
-  Serial.println("Ready for commands");
+  Serial.print("Init complete");
+  Serial.print("Ready for commands");
 }
 
 /**
@@ -151,8 +151,9 @@ void acceptSerialCommandsFromRPi()
 
 void processCommand(unsigned char command)
 {
-  Serial.println("Command received");
-  Serial.println(command);
+  Serial.print("Command received: ");
+  Serial.print(command, HEX);
+  Serial.print("\n");
   
   // First process the movement cmds, since they are a ranged values -10 through 10
   if (command >= CMD_ROTATE_LEFT_MAX && command <= CMD_ROTATE_RIGHT_MAX) {
