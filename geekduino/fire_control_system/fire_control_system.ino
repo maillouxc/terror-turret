@@ -109,8 +109,8 @@ void setup()
   setupPins();
   setSafetyOn(true);
   moveServosToInitialPosition();
-  Serial.print("Init complete");
-  Serial.print("Ready for commands");
+  Serial.println("Init complete");
+  Serial.println("Ready for commands");
 }
 
 /**
@@ -140,6 +140,7 @@ void setupPins()
 
   pinMode(PUSHBUTTON_PIN, INPUT);
   pinMode(LASER_PIN, OUTPUT);
+  pinMode(TRIGGER_PIN, OUTPUT);
 }
 
 void acceptSerialCommandsFromRPi()
