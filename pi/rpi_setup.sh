@@ -34,7 +34,7 @@ success() {
   runtime=$((endtime - starttime))
   runtime_minutes=$((runtime/60))
   printf "SUCCESS after ${runtime} seconds (${runtime_minutes} minutes)."
-  printf "${OUTPUT_NOCOLOR}"
+  printf "${OUTPUT_NO_COLOR}"
   exit 0
 }
 
@@ -59,7 +59,9 @@ echo "Installing pip package manager for Python..."
 sudo apt-get install python-pip || exiterror
 echo "Installing python-serial..."
 sudo apt-get install python-serial || exiterror
+pip install pyserial || exiterror
+echo "Installing colorama for python..."
+pip install colorama || exiterror
 echo "Finished installing needed packages.\n"
 
 success
-

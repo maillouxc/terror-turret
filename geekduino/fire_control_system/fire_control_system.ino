@@ -20,6 +20,7 @@ const int PAN_SERVO_PIN = 10;
 const int TILT_SERVO_PIN = 11;
 
 const int DEBOUNCE_DELAY_MS = 50;
+const int TOGGLE_BUTTON_COOLDOWN = 200;
 
 // Needed to compensate for servo centered position being slightly wrong
 const int TURRET_PITCH_CALIBRATION = 120;
@@ -103,10 +104,13 @@ int verticalSpeedLevel = 0;
  */
 void setup()
 {
+  Serial.begin(SERIAL_BAUD_RATE);
+  Serial.print("Initializing");
   setupPins();
   setSafetyOn(true);
   moveServosToInitialPosition();
-  Serial.begin(SERIAL_BAUD_RATE);
+  Serial.println("Init complete");
+  Serial.println("Ready for commands");
 }
 
 /**
@@ -116,6 +120,7 @@ void loop()
 {
   acceptSerialCommandsFromRPi();
   stopFiringIfMaxBurstLengthExceeded();
+  readAndDebounceButton();
   calculateNewServoPositions();
   ensureDesiredServoPositionsAreInAllowedRange();
   panServo.writeMicroseconds(panValue);
@@ -135,6 +140,7 @@ void setupPins()
 
   pinMode(PUSHBUTTON_PIN, INPUT);
   pinMode(LASER_PIN, OUTPUT);
+  pinMode(TRIGGER_PIN, OUTPUT);
 }
 
 void acceptSerialCommandsFromRPi()
@@ -146,6 +152,10 @@ void acceptSerialCommandsFromRPi()
 
 void processCommand(unsigned char command)
 {
+  Serial.print("Command received: ");
+  Serial.print(command, HEX);
+  Serial.print("\n");
+  
   // First process the movement cmds, since they are a ranged values -10 through 10
   if (command >= CMD_ROTATE_LEFT_MAX && command <= CMD_ROTATE_RIGHT_MAX) {
     horizontalSpeedLevel = command - CMD_ROTATE_ZERO;
@@ -189,12 +199,26 @@ void calculateNewServoPositions()
  */
 void setSafetyOn(bool safetyOn)
 {
+  if (safetyOn) {
+    Serial.println("Safety ON");
+  }
+  else {
+    Serial.println("Safety OFF");
+  }
+  
   isSafetyOn = safetyOn;
   setLaserOn(!safetyOn);
 }
 
 void setLaserOn(bool laserOn)
 {
+  if (laserOn) {
+    Serial.println("Laser ON");
+  }
+  else {
+    Serial.println("Laser OFF");
+  }
+  
   int pinValue = laserOn ? HIGH : LOW;
   digitalWrite(LASER_PIN, pinValue);
 }
@@ -225,6 +249,9 @@ int readAndDebounceButton()
     if (reading != buttonState) {
       // Button is now debounced, so reading should be the correct state
       buttonState = reading;
+      if (buttonState == HIGH) {
+        onButtonPressed(); 
+      }
     }
   }
   lastButtonState = reading;
@@ -243,15 +270,15 @@ void stopFiringIfMaxBurstLengthExceeded()
 }
 
 /**
- * This provides a backup way to engage the safety if things start going crazy.
+ * Called by readAndDebounceButton().
+ * 
+ * Really, we should be using a function pointer to use the listener pattern here,
+ * but this is really simple software and it wouldn't be worth our time.
+ * Hardcoding in a listener function is bad, but in this case, it's okay.
  */
-void engageSafetyIfButtonPressed()
+void onButtonPressed()
 {
-  int buttonReading = readAndDebounceButton();
-  bool buttonPressed = (buttonReading == HIGH);
-  if (buttonPressed) {
-    setSafetyOn(true);
-  }
+  setSafetyOn(!isSafetyOn);
 }
 
 void setIsFiring(bool fireWeapon) 
