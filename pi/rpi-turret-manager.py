@@ -24,9 +24,12 @@ CMD_PITCH_UP_MAX = 0x4F
 
 SERIAL_BAUD_RATE = 9600
 
-turretSerialPort = 'COM3'
+turretSerialPort = '/dev/ttyUSB0'
 
 arduinoSerialConn = serial.Serial()
+
+# Used to know when are about to exit, to allow threads to clean up things
+exiting = False
 
 
 def main():
@@ -36,6 +39,15 @@ def main():
     loggingThread = Thread(target = SerialLoggingThread)
     loggingThread.start()
     testTurretCommands()
+    cleanup()
+    exit(0)
+
+
+def cleanup():
+    exiting = True
+    # Allow threads to have a moment to react
+    sleep(1)
+    arduinoSerialConn.close()
     colorama.deinit()
 
 
@@ -126,10 +138,13 @@ def crash(reason):
 
 
 def SerialLoggingThread():
-    while(1):
-        turretOutput = str(arduinoSerialConn.readline(), "utf-8")
-        if turretOutput != "":
-            print("Turret: " + turretOutput)
+    while(not exiting):
+        if arduinoSerialConn.isOpen():
+            turretOutput = str(arduinoSerialConn.readline(), "utf-8")
+            if turretOutput != "":
+                print("Turret: " + turretOutput)
+        else:
+            return
 
 
 if __name__ == "__main__":
