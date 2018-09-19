@@ -81,6 +81,7 @@ sudo apt-get install uv4l-renderer || exiterror
 sudo apt-get install uv4l-mjpegstream || exiterror
 sudo apt-get install uv4l-server || exiterror
 sudo apt-get install uv4l-webrtc || exiterror
+sudo apt-get install uv4l-demos || exiterror
 
 echo "Finished installing all needed packages.\n"
 
