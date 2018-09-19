@@ -86,5 +86,6 @@ sudo apt-get install uv4l-demos || exiterror
 echo "Finished installing all needed packages.\n"
 
 echo "It is recommended to restart the Pi now."
+echo "It is also recommended to unplug and replug the USB webcam after restart."
 
 success
