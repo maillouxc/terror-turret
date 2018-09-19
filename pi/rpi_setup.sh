@@ -51,6 +51,7 @@ echo "COMPLETE\n"
 
 echo "Installing needed packages..."
 sudo apt-get update || exiterror "Failed to run apt-get update."
+sudo apt-get upgrade || exiterror "Failed to run apt-get upgrade."
 echo "Installing Arduino IDE..."
 sudo apt-get install arduino || exiterror
 echo "Installing Git..."
