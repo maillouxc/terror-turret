@@ -60,13 +60,29 @@ echo "Installing Vim..."
 sudo apt-get install vim || exiterror
 echo "Installing fswebcam..."
 sudo apt-get install fswebcam || exiterror
-echo "Installing pip package manager for Python..."
+
+echo "\nInstalling pip package manager for Python..."
 sudo apt-get install python-pip || exiterror
-echo "Installing python-serial..."
-sudo apt-get install python-serial || exiterror
+echo "Installing needed Python packages..."
+echo "Installing pyserial..."
 pip install pyserial || exiterror
 echo "Installing colorama for python..."
 pip install colorama || exiterror
-echo "Finished installing needed packages.\n"
+
+echo "\nInstalling UV4l..."
+curl http://www.linux-projects.org/listing/uv4l_repo/lpkey.asc | sudo apt-key add -
+echo "deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main" >> /etc/apt/sources.list
+sudo apt-get install uv4l || exiterror
+sudo apt-get install uv4l-raspicam || exiterror
+sudo apt-get install uv4l-raspicam-extras || exiterror
+sudo apt-get install uv4l-decoder || exiterror
+sudo apt-get install uv4l-encoder || exiterror
+sudo apt-get install uv4l-renderer || exiterror
+sudo apt-get install uv4l-server || exiterror
+sudo apt-get install uv4l-webrtc || exiterror
+
+echo "Finished installing all needed packages.\n"
+
+echo "It is recommended to restart the Pi now."
 
 success
