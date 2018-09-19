@@ -6,6 +6,7 @@ import serial
 import serial.tools.list_ports
 from threading import Thread
 from time import sleep
+import colorama
 from colorama import Fore
 from colorama import Style
 
@@ -30,10 +31,12 @@ arduinoSerialConn = serial.Serial()
 
 def main():
     print("\nTurret manager software started.\n")
+    colorama.init()
     establishConnectionToTurret()
     loggingThread = Thread(target = SerialLoggingThread)
     loggingThread.start()
     testTurretCommands()
+    colorama.deinit()
 
 
 def establishConnectionToTurret():
@@ -66,58 +69,61 @@ def commandTurret(command):
 
 def testTurretCommands():
     print("\nInitiating turret commands test...\n")
-    sleep(5)
+    sleep(3)
 
     print("Commanding SAFETY OFF")
     commandTurret(CMD_SAFETY_OFF)
-    sleep(10)
+    sleep(3)
 
     print("Commanding SAFETY ON")
     commandTurret(CMD_SAFETY_ON)
-    sleep(10)
+    sleep(3)
 
     print("Commanding SAFETY OFF")
     commandTurret(CMD_SAFETY_OFF)
-    sleep(10)
+    sleep(3)
 
     print("Firing for 1 second")
     commandTurret(CMD_FIRE)
     sleep(1)
     commandTurret(CMD_STOP_FIRE)
-    sleep(10)
+    sleep(3)
 
     print("Left at speed 7")
     commandTurret(CMD_ROTATE_ZERO - 7)
-    sleep(10)
+    sleep(7)
 
     print("Right at speed 3")
     commandTurret(CMD_ROTATE_ZERO + 3)
-    sleep(10)
+    sleep(7)
 
     print("Up at speed 10")
     commandTurret(CMD_PITCH_UP_MAX)
-    sleep(10)
+    sleep(7)
 
     print("Down at speed 1")
     commandTurret(CMD_PITCH_ZERO - 1)
-    sleep(10)
+    sleep(7)
 
     print("Testing moving and firing")
     commandTurret(CMD_ROTATE_ZERO + 3)
     commandTurret(CMD_FIRE)
     sleep(1)
     commandTurret(CMD_STOP_FIRE)
-    sleep(10)
+    sleep(7)
 
     print("Turning safety back on")
     commandTurret(CMD_SAFETY_ON)
-
+    sleep(2)
+    
     print("Test complete.")
 
 
 def crash(reason):
-    print(f'\n{Fore.RED}{reason}{Style.RESET_ALL}\n')
+    print(Fore.RED + reason + Style.RESET_ALL)
+    colorama.deinit()
     exit(1)
+
 
 def SerialLoggingThread():
     while(1):
@@ -128,3 +134,5 @@ def SerialLoggingThread():
 
 if __name__ == "__main__":
     main()
+
+
