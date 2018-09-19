@@ -78,6 +78,7 @@ sudo apt-get install uv4l-raspicam-extras || exiterror
 sudo apt-get install uv4l-decoder || exiterror
 sudo apt-get install uv4l-encoder || exiterror
 sudo apt-get install uv4l-renderer || exiterror
+sudo apt-get install uv4l-mjpegstream || exiterror
 sudo apt-get install uv4l-server || exiterror
 sudo apt-get install uv4l-webrtc || exiterror
 
