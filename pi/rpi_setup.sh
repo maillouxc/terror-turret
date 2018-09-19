@@ -55,6 +55,10 @@ echo "Installing Arduino IDE..."
 sudo apt-get install arduino || exiterror
 echo "Installing Git..."
 sudo apt-get install git || exiterror
+echo "Installing Vim..."
+sudo apt-get install vim || exiterror
+echo "Installing fswebcam..."
+sudo apt-get install fswebcam || exiterror
 echo "Installing pip package manager for Python..."
 sudo apt-get install python-pip || exiterror
 echo "Installing python-serial..."
