@@ -7,5 +7,7 @@
 
 echo "Starting UV4L server on port 9000..."
 
-uv4l --config-file='uv4l-config.conf'
-
+uv4l --config-file='uv4l-config.conf' \
+	--driver-config-file='uv4l-config.conf' \
+	--external-driver \ 
+	--device-name=video0
