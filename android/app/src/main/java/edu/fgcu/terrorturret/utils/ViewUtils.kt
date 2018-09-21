@@ -10,8 +10,7 @@ import edu.fgcu.terrorturret.R
  * Useful when paired with a vibration to indicate an invalid input on a form field.
  */
 fun View.shake() {
-    AnimatorInflater.loadAnimator(context, R.animator.shake).apply {
-        setTarget(this)
-        start()
-    }
+    val animator = AnimatorInflater.loadAnimator(context, R.animator.shake)
+    animator.setTarget(this)
+    animator.start()
 }

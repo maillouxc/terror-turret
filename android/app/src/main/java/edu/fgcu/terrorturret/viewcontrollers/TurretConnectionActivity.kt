@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Vibrator
 import edu.fgcu.terrorturret.R
+import edu.fgcu.terrorturret.network.TurretConnection
 import edu.fgcu.terrorturret.utils.shake
 import kotlinx.android.synthetic.main.activity_turret_connection.*
 
@@ -19,6 +20,15 @@ class TurretConnectionActivity : AppCompatActivity() {
 
     private fun onClickConnect() {
         if (validateConnectionInfo()) {
+            try {
+                TurretConnection.init(
+                        field_turret_ip.text.toString(),
+                        field_turret_port.text.toString().toInt(),
+                        field_turret_password.text.toString()
+                )
+            } catch (ex: Exception) {
+                return
+            }
             onConnected()
         }
     }

@@ -4,9 +4,9 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
 import com.github.niqdev.mjpeg.DisplayMode
-import com.github.niqdev.mjpeg.Mjpeg
 import edu.fgcu.terrorturret.R
 import edu.fgcu.terrorturret.applogic.TurretController
+import edu.fgcu.terrorturret.network.TurretConnection
 import kotlinx.android.synthetic.main.activity_turret_control.*
 
 class TurretControlActivity : AppCompatActivity() {
@@ -15,23 +15,17 @@ class TurretControlActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_turret_control)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         registerClickListeners()
         beginStreamingVideo()
-
-        // Update the UI for the state of "Safety engaged"
         onSwitchSafety(false)
     }
 
     private fun beginStreamingVideo() {
-        val timeout = 5
-        Mjpeg.newInstance()
-                .open("http://192.168.0.21:8080/stream/video.mjpeg", timeout)
-                .subscribe { inputStream ->
-                    video_view.setSource(inputStream)
-                    video_view.setDisplayMode(DisplayMode.BEST_FIT)
-                    video_view.showFps(true)
-                }
+        TurretConnection.getVideoStream().subscribe { videoStream ->
+            video_view.setSource(videoStream)
+            video_view.setDisplayMode(DisplayMode.FULLSCREEN)
+            video_view.showFps(true)
+        }
     }
 
     private fun registerClickListeners() {
