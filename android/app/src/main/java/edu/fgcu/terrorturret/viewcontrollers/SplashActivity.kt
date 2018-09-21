@@ -35,7 +35,7 @@ class SplashActivity : AppCompatActivity() {
         launch(UI) {
             delay(SPLASH_DURATION_MS)
             finish()
-            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            startActivity(Intent(this@SplashActivity, TurretConnectionActivity::class.java))
         }
     }
 

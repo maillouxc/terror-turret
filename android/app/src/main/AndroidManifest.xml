@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".viewcontrollers.MainActivity"
+            android:name=".viewcontrollers.TurretConnectionActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".viewcontrollers.TurretControlActivity"

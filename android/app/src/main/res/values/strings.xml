@@ -19,6 +19,9 @@
     <string name="field_turret_ip">Turret IP Address</string>
     <string name="field_turret_port">Port</string>
 
+    <!-- Form field validation error messages -->
+    <string name="validation_error_required_field">Required</string>
+
     <!-- Uncategorized strings -->
     <string name="connect_to_turret">Connect to turret</string>
 
