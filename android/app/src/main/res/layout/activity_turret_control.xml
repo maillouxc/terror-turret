@@ -8,14 +8,16 @@
     tools:context=".viewcontrollers.TurretControlActivity"
     tools:layout_editor_absoluteY="25dp">
 
-    <VideoView
+    <com.github.niqdev.mjpeg.MjpegSurfaceView
+        xmlns:stream="http://schemas.android.com/apk/res-auto"
         android:id="@+id/video_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        stream:type="stream_default"/>
 
     <Switch
         android:id="@+id/safety"
