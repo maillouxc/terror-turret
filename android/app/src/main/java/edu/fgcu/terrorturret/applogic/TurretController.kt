@@ -4,7 +4,7 @@ import android.util.Log
 import edu.fgcu.terrorturret.LoggerTags.LOG_TURRET_CONTROL
 import kotlin.math.absoluteValue
 
-object RobotController {
+object TurretController {
 
     private const val NUM_SPEED_SETTINGS = 10
 

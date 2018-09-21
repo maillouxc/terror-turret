@@ -4,7 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import edu.fgcu.terrorturret.R
-import edu.fgcu.terrorturret.applogic.RobotController
+import edu.fgcu.terrorturret.applogic.TurretController
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onClickFireButton() {
-        RobotController.fireZeMissiles()
+        TurretController.fireZeMissiles()
     }
 
     private fun onAnalogStickMoved(xPos: Int, yPos: Int) {
