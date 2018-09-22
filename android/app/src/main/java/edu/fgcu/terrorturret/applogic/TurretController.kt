@@ -65,7 +65,7 @@ object TurretController {
 
     private fun rotateTurretAtSpeed(speedLevel: Int) {
         val gatedSpeed = gateSpeedSetting(speedLevel)
-        val rotateCommand = TurretCommands.CMD_PITCH_FORMAT.format(gatedSpeed)
+        val rotateCommand = TurretCommands.CMD_ROTATE_FORMAT.format(gatedSpeed)
         TurretConnection.sendTurretCommand(rotateCommand)
     }
 
