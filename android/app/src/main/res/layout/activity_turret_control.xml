@@ -20,7 +20,7 @@
         stream:type="stream_default"/>
 
     <Switch
-        android:id="@+id/safety"
+        android:id="@+id/arm_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
