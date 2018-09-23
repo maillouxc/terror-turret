@@ -100,7 +100,7 @@ def establishConnectionToTurret():
     print("")
 
     # TODO we need a way to programatically determine which port the turret is on
-    # We'll have to use some sort of negotation, ping each port and listening for correct response
+    # We'll have to use some sort of negotation, ping each port and listen for correct response
 
     print("Attempting to connect to turret on " + turretSerialPort + "...")
     try:
@@ -189,23 +189,24 @@ def crash(reason):
     colorama.deinit()
     exit(1)
 
-
-
+    
+    
 
 def SerialLoggingThread():
-    print("Beginning turret output logging thread\n")
+    print("Beginning turret output logging...\n")
     while(not exiting):
         if arduinoSerialConn.isOpen():
             turretOutput = str(arduinoSerialConn.readline(), "utf-8")
             if turretOutput != "":
-                print("Turret: " + turretOutput)
+                print("Turret: " + turretOutput, end='')
         else:
             return
 
-
-
+        
+        
 
 class TurretCommandServer(WebSocket):
+    
     IN_CMD_FIRE = "FIRE"
     IN_CMD_CEASE_FIRE = "CEASE FIRE"
     IN_CMD_SAFETY_ON = "SAFETY ON"
@@ -221,7 +222,7 @@ class TurretCommandServer(WebSocket):
 
 
     def handleConnected(self):
-        print("Client connected to server.")
+        print("Client connected to command server.")
 
 
     def handleClose(self):
@@ -246,6 +247,8 @@ class TurretCommandServer(WebSocket):
         else:
             print("Unrecognized command received: " + str(command))
 
+            
+            
 
 if __name__ == "__main__":
     main()
