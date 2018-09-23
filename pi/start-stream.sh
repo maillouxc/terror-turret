@@ -10,9 +10,6 @@ sleep 3
 
 echo "Starting UV4L server on port 8080..."
 uv4l --driver uvc \
-	--device-id 046d:0825 \
-	--frame-buffers 2 \
-	--auto-video_nr \
 	--config-file "./uv4l-config.conf" \
 	--driver-config-file "uv4l-config.conf"
 	
