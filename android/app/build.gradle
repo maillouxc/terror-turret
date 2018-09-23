@@ -43,6 +43,7 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.jackandphantom.android:joystickview:1.0.2'
     implementation 'com.github.niqdev:mjpeg-view:1.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.7.0'
 
     testImplementation 'junit:junit:4.12'
 
