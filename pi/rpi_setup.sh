@@ -51,7 +51,6 @@ if [[ $EUID != 0 ]]
 then
   exiterror "This script must be run as root. Please re-run with sudo."
 fi
-echo -e "COMPLETE\n"
 
 echo "Installing needed packages..."
 sudo apt-get update || exiterror "Failed to run apt-get update."
