@@ -65,11 +65,11 @@ echo -e "\nInstalling pip package manager for Python..."
 sudo apt-get install python-pip || exiterror
 echo "Installing needed Python packages..."
 echo "Installing pyserial..."
-sudo pip install pyserial || exiterror
+sudo pip3 install pyserial || exiterror
 echo "Installing colorama for Python..."
-sudo pip install colorama || exiterror
+sudo pip3 install colorama || exiterror
 echo "Installing SimpleWebsocketServer for Python..."
-sudo pip install git+https://github.com/dpallot/simple-websocket-server.git || exiterror
+sudo pip3 install git+https://github.com/dpallot/simple-websocket-server.git || exiterror
 
 echo -e "\nInstalling UV4L..."
 curl http://www.linux-projects.org/listing/uv4l_repo/lpkey.asc | sudo apt-key add -
