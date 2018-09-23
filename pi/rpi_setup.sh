@@ -33,8 +33,12 @@ success() {
   endtime=$(date +%s)
   runtime=$((endtime - starttime))
   runtime_minutes=$((runtime/60))
-  printf "SUCCESS after ${runtime} seconds (${runtime_minutes} minutes)."
+  printf "SUCCESS after ${runtime} seconds (${runtime_minutes} minutes).
   printf "${OUTPUT_NO_COLOR}"
+  printf "\n Rebooting the Pi to make sure everything works as expected..."
+  printf "You have 5 seconds to cancel with Ctrl + C."
+  sleep 5
+  sudo reboot
   exit 0
 }
 
@@ -88,7 +92,8 @@ sudo apt-get install uv4l-uvc || exiterror
 
 echo -e "Finished installing all needed packages.\n"
 
-echo "It is recommended to restart the Pi now."
-echo "It is also recommended to unplug and replug the USB webcam after restart."
+echo -e "\n Cloning project code from github..."
+sudo mkdir -p code
+sudo git clone "https://www.github.com/maillouxc/terror-turret.git"
 
 success
