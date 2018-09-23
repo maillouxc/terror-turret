@@ -34,7 +34,7 @@ class TurretControlActivity : AppCompatActivity() {
     }
 
     private fun registerJoystickMovementListener() {
-        analog_stick.setOnMoveListener { angle, strength ->
+        analog_stick.setOnMoveListener({ angle, strength ->
             // Strength is a percentage value [0, 100]
             // Angle is degrees measured clockwise from the vertical, so 0 degrees is straight up
 
@@ -42,12 +42,14 @@ class TurretControlActivity : AppCompatActivity() {
             // I don't have time to rewrite the library to allow this, so for now this is how we
             // do it, but ideally this functionality should be baked in to the library
 
-            val angleInRadians = Math.toRadians(angle)
-            val normalizedX = (strength / 100) * Math.cos(angleInRadians)
-            val normalizedY = (strength / 100) * Math.sin(angleInRadians)
+            val angleInRadians = Math.toRadians(angle.toDouble())
+            val normalizedX = (strength / 100.0) * Math.cos(angleInRadians)
+            val normalizedY = (strength / 100.0) * Math.sin(angleInRadians)
 
             TurretController.updateAnalogPosition(normalizedX, normalizedY)
-        }
+        },
+        JOYSTICK_UPDATE_FREQ_HZ
+        )
     }
 
     private fun registerClickListeners() {
@@ -82,6 +84,10 @@ class TurretControlActivity : AppCompatActivity() {
             crosshair.alpha = 0.1f
             TurretController.engageSafety(true)
         }
+    }
+
+    companion object {
+        const val JOYSTICK_UPDATE_FREQ_HZ = 10
     }
 
 }

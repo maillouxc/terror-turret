@@ -11,34 +11,14 @@ object TurretController {
 
     private const val NUM_SPEED_SETTINGS = 10
 
-    private const val ANALOG_POS_UPDATES_PER_SEC = 5
+    private var horizontalSpeed = 0
+    private var verticalSpeed = 0
 
     private var lastHorizontalSpeed = 0
     private var lastVerticalSpeed = 0
 
-    private var horizontalSpeed = 0
-    private var verticalSpeed = 0
-
     var isSafetyOn = true
         private set
-
-    private var analogPositionUpdateTime: Timer
-
-    init {
-        val timerPeriod = 1000 / ANALOG_POS_UPDATES_PER_SEC
-        analogPositionUpdateTime = timer(startAt = Date(), period = timerPeriod.toLong()) {
-            // No need to send duplicate information
-            if (horizontalSpeed != lastHorizontalSpeed) {
-                rotateTurretAtSpeed(horizontalSpeed)
-            }
-            if (verticalSpeed != lastVerticalSpeed) {
-                pitchTurretAtSpeed(verticalSpeed)
-            }
-
-            lastHorizontalSpeed = horizontalSpeed
-            lastVerticalSpeed = verticalSpeed
-        }
-    }
 
     fun fireZeMissiles() {
         if (!isSafetyOn) {
@@ -75,6 +55,17 @@ object TurretController {
     fun updateAnalogPosition(normalizedX: Double, normalizedY: Double) {
         horizontalSpeed = (normalizedX * 10).roundToInt()
         verticalSpeed = (normalizedY * 10).roundToInt()
+
+        // No need to send duplicate information
+        if (horizontalSpeed != lastHorizontalSpeed) {
+            rotateTurretAtSpeed(horizontalSpeed)
+        }
+        if (verticalSpeed != lastVerticalSpeed) {
+            pitchTurretAtSpeed(verticalSpeed)
+        }
+
+        lastHorizontalSpeed = horizontalSpeed
+        lastVerticalSpeed = verticalSpeed
     }
 
     private fun rotateTurretAtSpeed(speedLevel: Int) {
