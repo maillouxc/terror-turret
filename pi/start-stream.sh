@@ -8,7 +8,7 @@ sudo /usr/bin/pkill uv4l || echo "You must run this script as root!"
 # Give some time so that hopefully the process is dead
 sleep 3
 
-echo "Starting UV4L server on port 9000..."
+echo "Starting UV4L server on port 8080..."
 uv4l --driver uvc \
     --verbosity 8 \
 	--device-id 046d:0825 \
