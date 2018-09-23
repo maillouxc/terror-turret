@@ -18,9 +18,11 @@ class TurretControlActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_turret_control)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         registerClickListeners()
         registerJoystickMovementListener()
         onClickArmSwitch(false)
+
         beginStreamingVideo()
     }
     private fun beginStreamingVideo() {
