@@ -2,9 +2,11 @@ package edu.fgcu.terrorturret.viewcontrollers
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.WindowManager
 import com.github.niqdev.mjpeg.DisplayMode
+import edu.fgcu.terrorturret.LoggerTags
 import edu.fgcu.terrorturret.R
 import edu.fgcu.terrorturret.applogic.TurretController
 import edu.fgcu.terrorturret.network.TurretConnection
@@ -21,12 +23,11 @@ class TurretControlActivity : AppCompatActivity() {
         onClickArmSwitch(false)
         beginStreamingVideo()
     }
-
     private fun beginStreamingVideo() {
+        Log.i(LoggerTags.LOG_PI_CONNECTION, "Beginning video stream.")
         TurretConnection.getVideoStream().subscribe { videoStream ->
             video_view.setSource(videoStream)
             video_view.setDisplayMode(DisplayMode.FULLSCREEN)
-            video_view.showFps(true)
         }
     }
 
@@ -70,19 +71,13 @@ class TurretControlActivity : AppCompatActivity() {
 
     private fun onClickArmSwitch(checked: Boolean) {
         if (checked) {
-            // Weapon is now hot
             fire_button.alpha = 1.0f
             crosshair.alpha = 1.0f
             TurretController.engageSafety(false)
-
-            // TODO send command to gun to disengage safety
         } else {
-            // Weapon is now safe
             fire_button.alpha = 0.2f
             crosshair.alpha = 0.1f
             TurretController.engageSafety(true)
-
-            // TODO send command to gun to engage safety
         }
     }
 
