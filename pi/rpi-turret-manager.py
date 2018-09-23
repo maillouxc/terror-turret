@@ -37,9 +37,9 @@ exiting = False
 
 
 def main():
-    print("\nTurret manager software started.\n")
     colorama.init()
     parseCommandLineArguments()
+    print("\nTurret manager software started.\n")
     establishConnectionToTurret()
 
     loggingThread = Thread(target = SerialLoggingThread)
@@ -58,24 +58,34 @@ def main():
 
 def parseCommandLineArguments():
     programDescription = "Main control software for the Terror Turret."
-    parser = argparse.ArgumentParser(
-        description = programDescription,
-        )
+    parser = argparse.ArgumentParser(description = programDescription)
     parser.add_argument(
-        name = '-testMode',
+        '--test-mode',
         type = bool,
         default = False,
-        help="Runs the test script instead of normal program")
+        dest = 'testMode',
+        help = "Runs the test script instead of normal program")
+    parser.add_argument(
+        '--serial-port',
+        default = '/dev/ttyUSB0',
+        dest = 'serialPort',
+        help = "The name of the serial port to connect from.")
 
-    args = parser.parse_args()
-    testMode = args.testMode
+    # It pains me to use 'global' here - we need to refactor this when we can
+    parsedArgs = parser.parse_args()
+    global testMode
+    testMode = parsedArgs.testMode
+    global turretSerialPort
+    turretSerialPort = parsedArgs.serialPort
 
 
 def cleanup():
+    global exiting
     exiting = True
     # Allow threads to have a moment to react
     sleep(1)
     arduinoSerialConn.close()
+    print("\nTurret manager software exited.\n")
     colorama.deinit()
 
 
