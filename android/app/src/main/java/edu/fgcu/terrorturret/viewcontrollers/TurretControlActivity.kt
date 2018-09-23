@@ -42,8 +42,9 @@ class TurretControlActivity : AppCompatActivity() {
             // I don't have time to rewrite the library to allow this, so for now this is how we
             // do it, but ideally this functionality should be baked in to the library
 
-            val normalizedX = (strength / 100) * Math.cos(angle)
-            val normalizedY = (strength / 100) * Math.sin(angle)
+            val angleInRadians = Math.toRadians(angle)
+            val normalizedX = (strength / 100) * Math.cos(angleInRadians)
+            val normalizedY = (strength / 100) * Math.sin(angleInRadians)
 
             TurretController.updateAnalogPosition(normalizedX, normalizedY)
         }

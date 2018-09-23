@@ -11,7 +11,7 @@ object TurretController {
 
     private const val NUM_SPEED_SETTINGS = 10
 
-    private const val ANALOG_POS_UPDATES_PER_SEC = 0.2
+    private const val ANALOG_POS_UPDATES_PER_SEC = 5
 
     private var lastHorizontalSpeed = 0
     private var lastVerticalSpeed = 0
