@@ -3,8 +3,6 @@ package edu.fgcu.terrorturret.applogic
 import android.util.Log
 import edu.fgcu.terrorturret.LoggerTags.LOG_TURRET_CONTROL
 import edu.fgcu.terrorturret.network.TurretConnection
-import java.util.*
-import kotlin.concurrent.timer
 import kotlin.math.roundToInt
 
 object TurretController {
