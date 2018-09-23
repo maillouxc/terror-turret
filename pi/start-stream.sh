@@ -13,7 +13,8 @@ uv4l --driver uvc \
 	--device-id 046d:0825 \
 	--frame-buffers 2 \
 	--auto-video_nr \
-	--config-file "./uv4l-config.conf"
+	--config-file "./uv4l-config.conf" \
+	--driver-config-file "uv4l-config.conf"
 	
 echo -e "\nTurret stream *should* be up and running!\n"
 
