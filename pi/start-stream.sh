@@ -3,7 +3,7 @@
 # This file contains a simple script to start the UV4L video stream
 
 echo "Killing any existing UV4L stream stuff that may get in the way..."
-pkill uv4l || echo "You must this script as root!"
+sudo pkill uv4l || echo "You must this script as root!"
 
 echo "Starting UV4L server on port 9000..."
 uv4l --driver uvc \
