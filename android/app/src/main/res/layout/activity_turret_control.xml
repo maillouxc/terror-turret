@@ -8,17 +8,19 @@
     tools:context=".viewcontrollers.TurretControlActivity"
     tools:layout_editor_absoluteY="25dp">
 
-    <VideoView
+    <com.github.niqdev.mjpeg.MjpegSurfaceView
+        xmlns:stream="http://schemas.android.com/apk/res-auto"
         android:id="@+id/video_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        stream:type="stream_default"/>
 
     <Switch
-        android:id="@+id/safety"
+        android:id="@+id/arm_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -50,8 +52,8 @@
 
     <com.jackandphantom.joystickview.JoyStickView
         android:id="@+id/analog_stick"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"

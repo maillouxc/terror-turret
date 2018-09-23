@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 
-# This file contains a simple script to start the raspicam stream
-# For whatever reason, we've screwed something up and it doesn't start
-# by default anymore, and we can't figure out how to fix it.
-# So instead, just run this script whenever you need to start the stream.
+# This file contains a simple script to start the UV4L video stream
+
+echo "Killing any existing UV4L stream stuff that may get in the way..."
+sudo /usr/bin/pkill uv4l || echo "You must run this script as root!"
+
+# Give some time so that hopefully the process is dead
+sleep 3
 
 echo "Starting UV4L server on port 9000..."
+uv4l --driver uvc \
+    --verbosity 8 \
+	--device-id 046d:0825 \
+	--frame-buffers 2 \
+	--auto-video_nr
+	
+echo "Turret stream *should* be up and running."
 
-uv4l --config-file='uv4l-config.conf' \
-	--driver-config-file='uv4l-config.conf' \
-	--external-driver \
-	--device-name=video0
+echo "If the device name isn't /dev/video0, it didn't work."
+echo "It can sometimes help to run the script again in that case."

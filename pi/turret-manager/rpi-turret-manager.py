@@ -2,6 +2,10 @@
 
 # This Python program is the main Rpi control program for the turret
 
+# TODO - a modularizing refactor of this program - this is a temp hacky mess
+
+import sys
+import argparse
 import serial
 import serial.tools.list_ports
 from threading import Thread
@@ -9,6 +13,8 @@ from time import sleep
 import colorama
 from colorama import Fore
 from colorama import Style
+from SimpleWebSocketServer import SimpleWebSocketServer
+from SimpleWebSocketServer import WebSocket
 
 CMD_FIRE = 0x21
 CMD_STOP_FIRE = 0x22
@@ -24,30 +30,66 @@ CMD_PITCH_UP_MAX = 0x4F
 
 SERIAL_BAUD_RATE = 9600
 
-turretSerialPort = '/dev/ttyUSB0'
+turretSerialPort = 'COM1'
 
 arduinoSerialConn = serial.Serial()
+
+inTestMode = False
 
 # Used to know when are about to exit, to allow threads to clean up things
 exiting = False
 
 
 def main():
-    print("\nTurret manager software started.\n")
     colorama.init()
+    parseCommandLineArguments()
+    print("\nTurret manager software started.\n")
     establishConnectionToTurret()
+
     loggingThread = Thread(target = SerialLoggingThread)
     loggingThread.start()
-    testTurretCommands()
+
+    if testMode:
+        testTurretCommands()
+        cleanup()
+        exit(0)
+
+    initIncomingCommandsServer()
+    
     cleanup()
     exit(0)
 
 
+def parseCommandLineArguments():
+    programDescription = "Main control software for the Terror Turret."
+    parser = argparse.ArgumentParser(description = programDescription)
+    parser.add_argument(
+        '--test-mode',
+        type = bool,
+        default = False,
+        dest = 'testMode',
+        help = "Runs the test script instead of normal program")
+    parser.add_argument(
+        '--serial-port',
+        default = 'COM1',
+        dest = 'serialPort',
+        help = "The name of the serial port to connect from.")
+
+    # It pains me to use 'global' here - we need to refactor this when we can
+    parsedArgs = parser.parse_args()
+    global testMode
+    testMode = parsedArgs.testMode
+    global turretSerialPort
+    turretSerialPort = parsedArgs.serialPort
+
+
 def cleanup():
+    global exiting
     exiting = True
     # Allow threads to have a moment to react
     sleep(1)
     arduinoSerialConn.close()
+    print("\nTurret manager software exited.\n")
     colorama.deinit()
 
 
@@ -131,13 +173,27 @@ def testTurretCommands():
     print("Test complete.")
 
 
+def initIncomingCommandsServer():
+    global commandServer
+
+    # TODO determine the port to use dynamically
+    # TODO decide how to deconflict this port from the video stream port
+    print("Initializing incoming commands server...\n")
+    port = 8081
+    commandServer = SimpleWebSocketServer('', port, TurretCommandServer)
+    commandServer.serveforever()
+
+
 def crash(reason):
     print(Fore.RED + reason + Style.RESET_ALL)
     colorama.deinit()
     exit(1)
 
 
+
+
 def SerialLoggingThread():
+    print("Beginning turret output logging thread\n")
     while(not exiting):
         if arduinoSerialConn.isOpen():
             turretOutput = str(arduinoSerialConn.readline(), "utf-8")
@@ -145,6 +201,50 @@ def SerialLoggingThread():
                 print("Turret: " + turretOutput)
         else:
             return
+
+
+
+
+class TurretCommandServer(WebSocket):
+    IN_CMD_FIRE = "FIRE"
+    IN_CMD_CEASE_FIRE = "CEASE FIRE"
+    IN_CMD_SAFETY_ON = "SAFETY ON"
+    IN_CMD_SAFETY_OFF = "SAFETY OFF"
+    IN_CMD_ROTATE = "ROTATE SPEED"
+    IN_CMD_PITCH = "PITCH SPEED"
+
+
+    def handleMessage(self):
+        incomingCommand = self.data
+        print("Incoming command: " + incomingCommand)
+        self.processIncomingCommand(incomingCommand)
+
+
+    def handleConnected(self):
+        print("Client connected to server.")
+
+
+    def handleClose(self):
+        print("Closing websocket server...")
+
+
+    def processIncomingCommand(self, command):
+        if (command == self.IN_CMD_FIRE):
+            commandTurret(CMD_FIRE)
+        elif (command == self.IN_CMD_CEASE_FIRE):
+            commandTurret(CMD_STOP_FIRE)
+        elif (command == self.IN_CMD_SAFETY_ON):
+            commandTurret(CMD_SAFETY_ON)
+        elif (command == self.IN_CMD_SAFETY_OFF):
+            commandTurret(CMD_SAFETY_OFF)
+        elif (command.startswith(self.IN_CMD_ROTATE)):
+            speed = command.split(' ')[2]
+            commandTurret(CMD_ROTATE_ZERO + int(speed))
+        elif command.startswith(self.IN_CMD_PITCH):
+            speed = command.split(' ')[2]
+            commandturret(CMD_PITCH_ZERO + int(speed))
+        else:
+            print("Unrecognized command received: " + str(command))
 
 
 if __name__ == "__main__":

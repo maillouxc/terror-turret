@@ -47,7 +47,7 @@ if [[ $EUID != 0 ]]
 then
   exiterror "This script must be run as root. Please re-run with sudo."
 fi
-echo "COMPLETE\n"
+echo -e "COMPLETE\n"
 
 echo "Installing needed packages..."
 sudo apt-get update || exiterror "Failed to run apt-get update."
@@ -61,15 +61,17 @@ sudo apt-get install vim || exiterror
 echo "Installing fswebcam..."
 sudo apt-get install fswebcam || exiterror
 
-echo "\nInstalling pip package manager for Python..."
+echo -e "\nInstalling pip package manager for Python..."
 sudo apt-get install python-pip || exiterror
 echo "Installing needed Python packages..."
 echo "Installing pyserial..."
-pip install pyserial || exiterror
-echo "Installing colorama for python..."
-pip install colorama || exiterror
+sudo pip install pyserial || exiterror
+echo "Installing colorama for Python..."
+sudo pip install colorama || exiterror
+echo "Installing SimpleWebsocketServer for Python..."
+sudo pip install git+https://github.com/dpallot/simple-websocket-server.git || exiterror
 
-echo "\nInstalling UV4l..."
+echo -e "\nInstalling UV4L..."
 curl http://www.linux-projects.org/listing/uv4l_repo/lpkey.asc | sudo apt-key add -
 echo "deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main" >> /etc/apt/sources.list
 sudo apt-get install uv4l || exiterror
@@ -84,7 +86,7 @@ sudo apt-get install uv4l-webrtc || exiterror
 sudo apt-get install uv4l-demos || exiterror
 sudo apt-get install uv4l-uvc || exiterror
 
-echo "Finished installing all needed packages.\n"
+echo -e "Finished installing all needed packages.\n"
 
 echo "It is recommended to restart the Pi now."
 echo "It is also recommended to unplug and replug the USB webcam after restart."
