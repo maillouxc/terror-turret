@@ -199,22 +199,51 @@ def SerialLoggingThread():
             return
 
 
+
+
 class TurretCommandServer(WebSocket):
+
+    # TODO refactor these variables to be defined elsewhere
+
+    # Incoming commands received from the Android device
+    IN_CMD_FIRE = "FIRE"
+    IN_CMD_CEASE_FIRE = "CEASE FIRE"
+    IN_CMD_SAFETY_ON = "SAFETY ON"
+    IN_CMD_SAFTEY_OFF = "SAFETY OFF"
+    IN_CMD_ROTATE = "ROTATE SPEED"
+    IN_CMD_PITCH = "PITCH SPEED"
 
 
     def handleMessage(self):
         print("Server message received.")
-        # TODO
+        processIncomingCommand(self.data)
 
 
     def handleConnected(self):
-        print("Client connected to server."
-        # TODO
+        print("Client connected to server.")
 
 
     def handleClose(self):
-        print("Closing websocket server..."
-        # TODO
+        print("Closing websocket server...")
+
+
+    def processIncomingCommand(command):
+        if command == IN_CMD_FIRE:
+            commandTurret(CMD_FIRE)
+        elif command == IN_CMD_CEASE_FIRE:
+            commandTurret(CMD_STOP_FIRE)
+        elif command == IN_CMD_SAFETY_ON:
+            commandTurret(CMD_SAFETY_ON)
+        elif command == IN_CMD_SAFETY_OFF:
+            commandTurret(CMD_SAFETY_OFF)
+        elif command.startswith(IN_CMD_ROTATE):
+            speed = command.split(' ')[2]
+            commandTurret(CMD_ROTATE_ZERO + speed)
+        elif command.startswith(IN_CMD_PITCH):
+            speed = command.split(' ')[2]
+            commandturret(CMD_PITCH_ZERO + speed)
+        else:
+             print("Unrecognized command received: " + str(command))
 
 
 if __name__ == "__main__":
