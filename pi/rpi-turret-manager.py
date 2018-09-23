@@ -2,6 +2,8 @@
 
 # This Python program is the main Rpi control program for the turret
 
+import sys
+import argparse
 import serial
 import serial.tools.list_ports
 from threading import Thread
@@ -28,6 +30,8 @@ turretSerialPort = '/dev/ttyUSB0'
 
 arduinoSerialConn = serial.Serial()
 
+inTestMode = False
+
 # Used to know when are about to exit, to allow threads to clean up things
 exiting = False
 
@@ -35,12 +39,36 @@ exiting = False
 def main():
     print("\nTurret manager software started.\n")
     colorama.init()
+    parseCommandLineArguments()
     establishConnectionToTurret()
+
     loggingThread = Thread(target = SerialLoggingThread)
     loggingThread.start()
-    testTurretCommands()
+
+    if testMode:
+        testTurretCommands()
+        cleanup()
+        exit(0)
+
+    # TODO
+    
     cleanup()
     exit(0)
+
+
+def parseCommandLineArguments():
+    programDescription = "Main control software for the Terror Turret."
+    parser = argparse.ArgumentParser(
+        description = programDescription,
+        )
+    parser.add_argument(
+        name = '-testMode',
+        type = bool,
+        default = False,
+        help="Runs the test script instead of normal program")
+
+    args = parser.parse_args()
+    testMode = args.testMode
 
 
 def cleanup():
