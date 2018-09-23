@@ -3,15 +3,42 @@ package edu.fgcu.terrorturret.applogic
 import android.util.Log
 import edu.fgcu.terrorturret.LoggerTags.LOG_TURRET_CONTROL
 import edu.fgcu.terrorturret.network.TurretConnection
-import edu.fgcu.terrorturret.utils.map
+import java.util.*
+import kotlin.concurrent.timer
 import kotlin.math.roundToInt
 
 object TurretController {
 
     private const val NUM_SPEED_SETTINGS = 10
 
+    private const val ANALOG_POS_UPDATES_PER_SEC = 0.2
+
+    private var lastHorizontalSpeed = 0
+    private var lastVerticalSpeed = 0
+
+    private var horizontalSpeed = 0
+    private var verticalSpeed = 0
+
     var isSafetyOn = true
         private set
+
+    private var analogPositionUpdateTime: Timer
+
+    init {
+        val timerPeriod = 1000 / ANALOG_POS_UPDATES_PER_SEC
+        analogPositionUpdateTime = timer(startAt = Date(), period = timerPeriod.toLong()) {
+            // No need to send duplicate information
+            if (horizontalSpeed != lastHorizontalSpeed) {
+                rotateTurretAtSpeed(horizontalSpeed)
+            }
+            if (verticalSpeed != lastVerticalSpeed) {
+                pitchTurretAtSpeed(verticalSpeed)
+            }
+
+            lastHorizontalSpeed = horizontalSpeed
+            lastVerticalSpeed = verticalSpeed
+        }
+    }
 
     fun fireZeMissiles() {
         if (!isSafetyOn) {
@@ -46,21 +73,8 @@ object TurretController {
      * settings off to the turret.
      */
     fun updateAnalogPosition(normalizedX: Double, normalizedY: Double) {
-        val horizontalSpeed = normalizedX.map(
-                fromMin = 0.0,
-                fromMax = 1.0,
-                toMin = -NUM_SPEED_SETTINGS.toDouble(),
-                toMax = NUM_SPEED_SETTINGS.toDouble()
-        ).roundToInt()
-        val verticalSpeed = normalizedY.map(
-                fromMin = 0.0,
-                fromMax = 1.0,
-                toMin = -NUM_SPEED_SETTINGS.toDouble(),
-                toMax = NUM_SPEED_SETTINGS.toDouble()
-        ).roundToInt()
-
-        rotateTurretAtSpeed(horizontalSpeed)
-        pitchTurretAtSpeed(verticalSpeed)
+        horizontalSpeed = (normalizedX * 10).roundToInt()
+        verticalSpeed = (normalizedY * 10).roundToInt()
     }
 
     private fun rotateTurretAtSpeed(speedLevel: Int) {
@@ -83,8 +97,8 @@ object TurretController {
     private fun gateSpeedSetting(speedLevel: Int): Int {
         return when {
             speedLevel > NUM_SPEED_SETTINGS -> NUM_SPEED_SETTINGS
-            speedLevel < NUM_SPEED_SETTINGS -> NUM_SPEED_SETTINGS
-            else -> NUM_SPEED_SETTINGS
+            speedLevel < -NUM_SPEED_SETTINGS -> -NUM_SPEED_SETTINGS
+            else -> speedLevel
         }
     }
 

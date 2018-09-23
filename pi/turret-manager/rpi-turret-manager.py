@@ -242,7 +242,7 @@ class TurretCommandServer(WebSocket):
             commandTurret(CMD_ROTATE_ZERO + int(speed))
         elif command.startswith(self.IN_CMD_PITCH):
             speed = command.split(' ')[2]
-            commandturret(CMD_PITCH_ZERO + int(speed))
+            commandTurret(CMD_PITCH_ZERO + int(speed))
         else:
             print("Unrecognized command received: " + str(command))
 
