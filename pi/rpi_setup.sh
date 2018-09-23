@@ -93,6 +93,6 @@ echo -e "Finished installing all needed packages.\n"
 
 echo -e "\n Cloning project code from github..."
 sudo mkdir -p code
-sudo git clone "https://www.github.com/maillouxc/terror-turret.git"
+sudo git clone https://www.github.com/maillouxc/terror-turret.git ./code/terror-turret
 
 success
