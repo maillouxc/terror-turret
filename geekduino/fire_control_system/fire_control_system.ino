@@ -190,7 +190,8 @@ void moveServosToInitialPosition()
 
 void calculateNewServoPositions()
 {
-  panValue += horizontalSpeedLevel;
+  // panValue subtracts because the servo thinks left is positive but we define right as positive
+  panValue -= horizontalSpeedLevel;
   tiltValue += verticalSpeedLevel;
 }
 
