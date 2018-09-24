@@ -8,7 +8,7 @@ sudo /usr/bin/pkill uv4l || echo "You must run this script as root!"
 # Give some time so that hopefully the process is dead before continuing
 sleep 3
 
-echo "Starting UV4L server on port 8080..."
+echo "Starting UV4L server on port 9000..."
 uv4l --driver uvc \
 	--config-file "./uv4l-config.conf" \
 	--driver-config-file "uv4l-config.conf"
