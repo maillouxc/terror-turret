@@ -179,7 +179,7 @@ def initIncomingCommandsServer():
     # TODO determine the port to use dynamically
     # TODO decide how to deconflict this port from the video stream port
     print("Initializing incoming commands server...\n")
-    port = 8081
+    port = 9001
     commandServer = SimpleWebSocketServer('', port, TurretCommandServer)
     commandServer.serveforever()
 
