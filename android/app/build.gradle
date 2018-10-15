@@ -61,9 +61,9 @@ dependencies {
 gradle.buildFinished { buildResult ->
     if (buildResult.failure) {
         println ''
-        println 'Build failure? SAD!'
+        println 'Build failure? The Terror Turret will remember this...'
     } else {
         println ''
-        println 'Build successful - the terror turret will rule them all!'
+        println 'Build successful - the Terror Turret will rule them all!'
     }
 }
