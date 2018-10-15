@@ -36,7 +36,7 @@ class TurretControlActivity : AppCompatActivity() {
     private fun registerJoystickMovementListener() {
         analog_stick.setOnMoveListener({ angle, strength ->
             // Strength is a percentage value [0, 100]
-            // Angle is degrees measured clockwise from the vertical, so 0 degrees is straight up
+            // Angle is degrees measured from the right, counterclockwise.
 
             // We need to convert this to a normalized value [0, 1] in (x,y) coordinates
             // I don't have time to rewrite the library to allow this, so for now this is how we

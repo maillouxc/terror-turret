@@ -3,7 +3,7 @@
 # This file contains a simple script to start the UV4L video stream
 
 echo "Killing any existing UV4L stream stuff that may get in the way..."
-sudo /usr/bin/pkill uv4l || echo "You must run this script as root!"
+sudo /usr/bin/pkill uv4l
 
 # Give some time so that hopefully the process is dead before continuing
 sleep 3
