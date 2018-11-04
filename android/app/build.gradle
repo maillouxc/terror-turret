@@ -53,6 +53,7 @@ dependencies {
     implementation 'io.github.controlwear:virtualjoystick:1.9.2'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    implementation 'com.koushikdutta.async:androidasync:2.2.1'
 
     implementation project(':libwebrtc_19324')
 

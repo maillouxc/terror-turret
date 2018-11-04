@@ -52,7 +52,7 @@ class Signaller(
                 .build()
 
         val webSocketRequest = Request.Builder()
-                .url("ws://$signallingIp:$port/")
+                .url("ws://$signallingIp:$port/stream/webrtc")
                 .build()
 
         signallingWebSocket = okHttpClient.newWebSocket(webSocketRequest, webSocketListener)
