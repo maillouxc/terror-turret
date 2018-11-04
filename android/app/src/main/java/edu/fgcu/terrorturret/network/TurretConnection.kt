@@ -1,19 +1,17 @@
 package edu.fgcu.terrorturret.network
 
 import android.util.Log
-import com.github.niqdev.mjpeg.Mjpeg
-import com.github.niqdev.mjpeg.MjpegInputStream
 import edu.fgcu.terrorturret.LoggerTags
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
-import rx.Observable
 import java.util.concurrent.TimeUnit
 
 object TurretConnection {
 
+    var turretIp: String = ""
+    var turretPort: Int  = 9000
+
     private var timeout = 5
-    private var turretIp: String = ""
-    private var turretPort: Int  = 8080
     private var turretPassword: String = ""
 
     private lateinit var webSocket: WebSocket
@@ -39,11 +37,6 @@ object TurretConnection {
                 .build()
 
         webSocket = okHttpClient.newWebSocket(webSocketRequest, webSocketListener)
-    }
-
-    fun getVideoStream(): Observable<MjpegInputStream> {
-        val connectionString = "http://$turretIp:$turretPort/stream/video.mjpeg"
-        return Mjpeg.newInstance().open(connectionString, timeout)
     }
 
     fun sendTurretCommand(command: String) {

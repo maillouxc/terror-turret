@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Vibrator
+import android.util.Log
+import edu.fgcu.terrorturret.LoggerTags
 import edu.fgcu.terrorturret.R
 import edu.fgcu.terrorturret.network.TurretConnection
 import edu.fgcu.terrorturret.utils.shake
@@ -26,10 +28,11 @@ class TurretConnectionActivity : AppCompatActivity() {
                         field_turret_port.text.toString().toInt(),
                         field_turret_password.text.toString()
                 )
+                onConnected()
             } catch (ex: Exception) {
+                Log.e(LoggerTags.LOG_PI_CONNECTION, ex.toString())
                 return
             }
-            onConnected()
         }
     }
 

@@ -5,14 +5,21 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.WindowManager
-import com.github.niqdev.mjpeg.DisplayMode
 import edu.fgcu.terrorturret.LoggerTags
 import edu.fgcu.terrorturret.R
 import edu.fgcu.terrorturret.applogic.TurretController
 import edu.fgcu.terrorturret.network.TurretConnection
+import edu.fgcu.terrorturret.network.webrtc.WebRtcConnectionManager
 import kotlinx.android.synthetic.main.activity_turret_control.*
+import org.webrtc.EglBase
+import org.webrtc.MediaStream
+import org.webrtc.VideoRenderer
 
 class TurretControlActivity : AppCompatActivity() {
+
+    private val rootEglBase by lazy { EglBase.create() }
+
+    private lateinit var webRtcConnectionManager: WebRtcConnectionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,11 +32,38 @@ class TurretControlActivity : AppCompatActivity() {
 
         beginStreamingVideo()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        webRtcConnectionManager.cleanup()
+    }
+
     private fun beginStreamingVideo() {
-        Log.i(LoggerTags.LOG_PI_CONNECTION, "Beginning video stream.")
-        TurretConnection.getVideoStream().subscribe { videoStream ->
-            video_view.setSource(videoStream)
-            video_view.setDisplayMode(DisplayMode.FULLSCREEN)
+        video_view.init(rootEglBase.eglBaseContext, null)
+        video_view.setZOrderMediaOverlay(true)
+
+        val webRtcIp = TurretConnection.turretIp
+        val webRtcPort = TurretConnection.turretPort
+        webRtcConnectionManager = WebRtcConnectionManager(this)
+
+        try {
+            webRtcConnectionManager.connect(webRtcIp, webRtcPort)
+        } catch (ex: Exception) {
+            // TODO catch more specific exception
+            // TODO attempt to recover from exception
+            Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
+        }
+    }
+
+    private fun gotRemoteStream(stream: MediaStream) {
+        val videoTrack = stream.videoTracks[0]
+        runOnUiThread {
+            try {
+                val remoteRenderer = VideoRenderer(video_view)
+                videoTrack.addRenderer(remoteRenderer)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
