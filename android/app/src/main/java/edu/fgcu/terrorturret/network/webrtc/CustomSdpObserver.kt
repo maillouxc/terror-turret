@@ -12,8 +12,8 @@ import org.webrtc.SessionDescription
  * Theoretically, we could add some helpful base class behaviors here as well, such as logging.
  */
 open class CustomSdpObserver : SdpObserver {
-    override fun onCreateSuccess(p0: SessionDescription?) {}
-    override fun onSetFailure(p0: String?) {}
+    override fun onCreateSuccess(sessionDescription: SessionDescription?) {}
+    override fun onSetFailure(sessionDescription: String?) {}
     override fun onSetSuccess() {}
-    override fun onCreateFailure(p0: String?) {}
+    override fun onCreateFailure(sessionDescription: String?) {}
 }

@@ -7,6 +7,9 @@ import edu.fgcu.terrorturret.network.webrtc.dtos.CallRequestOptionsDto
 import edu.fgcu.terrorturret.network.webrtc.dtos.SignallingMessageDto
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONException
+import org.json.JSONObject
+import org.webrtc.IceCandidate
 import java.util.concurrent.TimeUnit
 
 class Signaller(
@@ -17,6 +20,7 @@ class Signaller(
 
     interface WebRtcSignalHandler {
         fun onOfferReceived(offer: String)
+        fun onIceCandidateReceived(iceCandidate: IceCandidate?)
     }
 
     private var signallingWebSocket: WebSocket
@@ -72,7 +76,7 @@ class Signaller(
         signallingWebSocket.send(Gson().toJson(callRequest))
     }
 
-    fun onIceCandidateReceived() {
+    fun sendAnswer() {
         // TODO
     }
 
@@ -81,12 +85,37 @@ class Signaller(
         when (messageObject.what) {
             "offer" -> { signalHandler.onOfferReceived(messageObject.data) }
             "message" -> { log("Message received: ${messageObject.data}") }
-            "iceCandidate" -> { } // TODO
+            "iceCandidate" -> {
+                try {
+                    onIceCandidateReceived(JSONObject(messageObject.data))
+                } catch (ex: JSONException) {
+                    // This signifies that the last (empty) ice candidate was received
+                    onIceCandidateReceived(null)
+                }
+            }
         }
     }
 
-    fun cleanup() {
+    private fun onIceCandidateReceived(data: JSONObject?) {
+        if (data == null) {
+            onDoneReceivingIceCandidates()
+        }
+        else {
+            val iceCandidate = IceCandidate(
+                    data.getString("sdpMid"),
+                    data.getInt("sdpMLineIndex"),
+                    data.getString("candidate")
+            )
+            signalHandler.onIceCandidateReceived(iceCandidate)
+        }
+    }
+
+    private fun onDoneReceivingIceCandidates() {
         // TODO
+    }
+
+    fun cleanup() {
+        signallingWebSocket.close(WEBSOCKET_CLOSE_CODE_NORMAL, "App closed")
     }
 
     private fun log(msg: String) {
@@ -94,8 +123,10 @@ class Signaller(
     }
 
     companion object {
-        const val TIMEOUT_SECONDS = 5
+        const val TIMEOUT_SECONDS = 10
         const val STUN_SERVER_URL = "stun:stun.1.google.com:19302"
+
+        const val WEBSOCKET_CLOSE_CODE_NORMAL = 1000
     }
 
 }

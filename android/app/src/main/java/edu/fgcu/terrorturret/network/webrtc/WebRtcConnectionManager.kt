@@ -1,9 +1,20 @@
 package edu.fgcu.terrorturret.network.webrtc
 
 import android.content.Context
+import android.util.Log
+import edu.fgcu.terrorturret.LoggerTags
+import org.json.JSONException
+import org.json.JSONObject
 import org.webrtc.*
 
-class WebRtcConnectionManager(private val context: Context): Signaller.WebRtcSignalHandler {
+class WebRtcConnectionManager(
+        private val context: Context,
+        private val webRtcStreamReceiver: WebRtcStreamReceiver
+): Signaller.WebRtcSignalHandler {
+
+    interface WebRtcStreamReceiver {
+        fun onStreamReady(mediaStream: MediaStream)
+    }
 
     private lateinit var localPeer: PeerConnection
     private lateinit var signaller: Signaller
@@ -17,9 +28,7 @@ class WebRtcConnectionManager(private val context: Context): Signaller.WebRtcSig
         PeerConnectionFactory(options)
     }
 
-    private var sdpObserver = object: CustomSdpObserver() {
-        // TODO
-    }
+    private var sdpObserver = object: CustomSdpObserver() {}
 
     private var peerConnectionObserver = object: CustomPeerConnectionObserver() {
 
@@ -29,6 +38,17 @@ class WebRtcConnectionManager(private val context: Context): Signaller.WebRtcSig
 
         override fun onAddStream(mediaStream: MediaStream?) {
             gotRemoteStream(mediaStream)
+        }
+
+    }
+
+    private var answerObserver = object: CustomSdpObserver() {
+
+        override fun onCreateSuccess(sessionDescription: SessionDescription?) {
+            super.onCreateSuccess(sessionDescription)
+
+            localPeer.setLocalDescription(CustomSdpObserver(), sessionDescription)
+            signaller.sendAnswer()
         }
 
     }
@@ -58,17 +78,29 @@ class WebRtcConnectionManager(private val context: Context): Signaller.WebRtcSig
     }
 
     override fun onOfferReceived(offer: String) {
-        localPeer.setRemoteDescription(
-                sdpObserver, SessionDescription(SessionDescription.Type.OFFER, offer)
-        )
+        try {
+            val offerSdp = JSONObject(offer).getString("sdp")
+            localPeer.setRemoteDescription(
+                    sdpObserver,
+                    SessionDescription(SessionDescription.Type.OFFER, offerSdp)
+            )
+            localPeer.createAnswer(answerObserver, sdpConstraints)
+        } catch (ex: JSONException) {
+            // TODO determine how to handle
+        }
     }
 
-    private fun onIceCandidateReceived(iceCandidate: IceCandidate?) {
-        localPeer.addIceCandidate(iceCandidate)
+    override fun onIceCandidateReceived(iceCandidate: IceCandidate?) {
+        if (iceCandidate != null) {
+            localPeer.addIceCandidate(iceCandidate)
+        }
     }
 
     private fun gotRemoteStream(mediaStream: MediaStream?) {
-        // TODO
+        Log.i(LoggerTags.LOG_WEBRTC, "Got remote stream")
+        if (mediaStream != null) {
+            webRtcStreamReceiver.onStreamReady(mediaStream)
+        }
     }
 
     fun cleanup() {

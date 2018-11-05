@@ -15,7 +15,8 @@ import org.webrtc.EglBase
 import org.webrtc.MediaStream
 import org.webrtc.VideoRenderer
 
-class TurretControlActivity : AppCompatActivity() {
+class TurretControlActivity : AppCompatActivity(),
+        WebRtcConnectionManager.WebRtcStreamReceiver {
 
     private val rootEglBase by lazy { EglBase.create() }
 
@@ -44,7 +45,7 @@ class TurretControlActivity : AppCompatActivity() {
 
         val webRtcIp = TurretConnection.turretIp
         val webRtcPort = TurretConnection.turretPort
-        webRtcConnectionManager = WebRtcConnectionManager(this)
+        webRtcConnectionManager = WebRtcConnectionManager(this, this)
 
         try {
             webRtcConnectionManager.connect(webRtcIp, webRtcPort)
@@ -55,8 +56,8 @@ class TurretControlActivity : AppCompatActivity() {
         }
     }
 
-    private fun gotRemoteStream(stream: MediaStream) {
-        val videoTrack = stream.videoTracks[0]
+    override fun onStreamReady(mediaStream: MediaStream) {
+        val videoTrack = mediaStream.videoTracks[0]
         runOnUiThread {
             try {
                 val remoteRenderer = VideoRenderer(video_view)
