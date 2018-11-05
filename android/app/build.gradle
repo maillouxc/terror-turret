@@ -51,9 +51,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha01'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'io.github.controlwear:virtualjoystick:1.9.2'
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:2.3.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
-    implementation 'com.koushikdutta.async:androidasync:2.2.1'
 
     implementation project(':libwebrtc_19324')
 
