@@ -6,6 +6,7 @@
       <w>vcodec</w>
       <w>vformat</w>
       <w>webrtc</w>
+      <w>websocket</w>
     </words>
   </dictionary>
 </component>

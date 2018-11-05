@@ -111,7 +111,7 @@ class Signaller(
     }
 
     private fun onDoneReceivingIceCandidates() {
-        // TODO
+        log("Done receiving trickle ICE candidates!")
     }
 
     fun cleanup() {
@@ -124,8 +124,6 @@ class Signaller(
 
     companion object {
         const val TIMEOUT_SECONDS = 10
-        const val STUN_SERVER_URL = "stun:stun.1.google.com:19302"
-
         const val WEBSOCKET_CLOSE_CODE_NORMAL = 1000
     }
 
