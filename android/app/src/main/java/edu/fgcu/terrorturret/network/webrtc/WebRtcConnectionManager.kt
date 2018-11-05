@@ -22,7 +22,7 @@ class WebRtcConnectionManager(
 
     private var peerIceServers: MutableList<PeerConnection.IceServer> = ArrayList()
 
-    val rootEglBase = RootEglBaseBuilder().rootEglBase
+    val rootEglBase = RootEglBaseBuilder().rootEglBase!!
 
     val peerConnectionFactory: PeerConnectionFactory by lazy {
         // Initialize PeerConnectionFactory global options
@@ -33,10 +33,9 @@ class WebRtcConnectionManager(
         val defaultVideoEncoderFactory = DefaultVideoEncoderFactory(
             rootEglBase.eglBaseContext, true, true
         )
-        val defaultVideoDecoderFactory = DefaultVideoDecoderFactory(
-            rootEglBase.eglBaseContext
-        )
+        val defaultVideoDecoderFactory = DefaultVideoDecoderFactory(rootEglBase.eglBaseContext)
         val options = PeerConnectionFactory.Options() // Currently does nothing but is required
+
         PeerConnectionFactory(options, defaultVideoEncoderFactory, defaultVideoDecoderFactory)
     }
 

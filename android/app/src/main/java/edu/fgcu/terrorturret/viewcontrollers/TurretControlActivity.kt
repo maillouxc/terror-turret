@@ -1,13 +1,10 @@
 package edu.fgcu.terrorturret.viewcontrollers
 
-import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.WindowManager
-import com.gun0912.tedpermission.PermissionListener
-import com.gun0912.tedpermission.TedPermission
 import edu.fgcu.terrorturret.LoggerTags
 import edu.fgcu.terrorturret.R
 import edu.fgcu.terrorturret.applogic.TurretController
@@ -15,8 +12,6 @@ import edu.fgcu.terrorturret.network.TurretConnection
 import edu.fgcu.terrorturret.network.webrtc.WebRtcConnectionManager
 import kotlinx.android.synthetic.main.activity_turret_control.*
 import org.webrtc.*
-import java.util.ArrayList
-import org.webrtc.VideoCapturer
 
 class TurretControlActivity : AppCompatActivity(),
         WebRtcConnectionManager.WebRtcStreamReceiver {
@@ -34,74 +29,7 @@ class TurretControlActivity : AppCompatActivity(),
 
         webRtcConnectionManager = WebRtcConnectionManager(this, this)
 
-        val permissionListener = object: PermissionListener {
-            override fun onPermissionGranted() {
-                tryLocalVideoRendering()
-            }
-
-            override fun onPermissionDenied(deniedPermissions: ArrayList<String>?) {
-                // TODO
-            }
-        }
-        TedPermission.with(this)
-                .setPermissionListener(permissionListener)
-                .setPermissions(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-                .check()
-
-        //beginStreamingVideo()
-    }
-
-    private fun tryLocalVideoRendering() {
-        fun createCameraCapturer(enumerator: CameraEnumerator): VideoCapturer? {
-            val deviceNames = enumerator.deviceNames
-
-            Log.d(LoggerTags.LOG_WEBRTC, "Trying to find front-facing camera")
-            for (deviceName in deviceNames) {
-                if (enumerator.isFrontFacing(deviceName)) {
-                    val videoCapturer = enumerator.createCapturer(deviceName, null)
-                    if (videoCapturer != null) {
-                        return videoCapturer
-                    }
-                }
-            }
-
-            Log.d(LoggerTags.LOG_WEBRTC, "Looking for other cameras.")
-            for (deviceName in deviceNames) {
-                if (!enumerator.isFrontFacing(deviceName)) {
-                    Log.d(LoggerTags.LOG_WEBRTC, "Creating other camera capturer.")
-                    val videoCapturer = enumerator.createCapturer(deviceName, null)
-                    if (videoCapturer != null) {
-                        return videoCapturer
-                    }
-                }
-            }
-
-            return null
-        }
-
-        val videoCapturer = createCameraCapturer(Camera1Enumerator(false))
-        val pcf = webRtcConnectionManager.peerConnectionFactory
-        val videoConstraints = MediaConstraints()
-        val audioConstraints = MediaConstraints()
-        val videoSource = pcf.createVideoSource(videoCapturer)
-        val localVideoTrack = pcf.createVideoTrack("100", videoSource)
-        val audioSource = pcf.createAudioSource(audioConstraints)
-        val localAudioTrack = pcf.createAudioTrack("101", audioSource)
-        val targetVideoFramerate = 30
-        val videoWidth = 1024
-        val videoHeight = 720
-
-        videoCapturer!!.startCapture(videoWidth, videoHeight, targetVideoFramerate)
-        localVideoTrack.addSink(video_view)
-        localAudioTrack.setEnabled(true)
-
-
-        video_view.setMirror(true)
-
-        video_view.init(webRtcConnectionManager.rootEglBase.eglBaseContext, null)
-        val localVideoRenderer = VideoRenderer(video_view)
-        localVideoTrack.addRenderer(localVideoRenderer)
-
+        beginStreamingVideo()
     }
 
     override fun onDestroy() {
@@ -127,12 +55,16 @@ class TurretControlActivity : AppCompatActivity(),
 
     override fun onStreamReady(mediaStream: MediaStream) {
         val videoTrack = mediaStream.videoTracks[0]
+
+        // As far as I can tell from the really bad documentation, the audio track should autoplay
+        val audioTrack = mediaStream.audioTracks[0]
+        audioTrack.setEnabled(true)
+
         runOnUiThread {
             try {
-                val remoteRenderer = VideoRenderer(video_view)
-                videoTrack.addRenderer(remoteRenderer)
-            } catch (e: Exception) {
-                e.printStackTrace()
+                videoTrack.addSink(video_view)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
