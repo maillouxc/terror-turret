@@ -57,7 +57,7 @@ class WebRtcConnectionManager(
         override fun onCreateSuccess(sessionDescription: SessionDescription?) {
             super.onCreateSuccess(sessionDescription)
             localPeer.setLocalDescription(CustomSdpObserver(), sessionDescription)
-            signaller.sendAnswer()
+            signaller.sendAnswer(sessionDescription!!)
         }
     }
 
@@ -78,10 +78,8 @@ class WebRtcConnectionManager(
             keyType = PeerConnection.KeyType.ECDSA
         }
 
-        sdpConstraints = MediaConstraints()
-
         localPeer = peerConnectionFactory.createPeerConnection(
-                webRtcConfig, sdpConstraints, peerConnectionObserver
+                webRtcConfig, MediaConstraints(), peerConnectionObserver
         )!!
     }
 

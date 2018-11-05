@@ -10,6 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONException
 import org.json.JSONObject
 import org.webrtc.IceCandidate
+import org.webrtc.SessionDescription
 import java.util.concurrent.TimeUnit
 
 class Signaller(
@@ -76,8 +77,23 @@ class Signaller(
         signallingWebSocket.send(Gson().toJson(callRequest))
     }
 
-    fun sendAnswer() {
-        // TODO
+    fun sendAnswer(sessionDescription: SessionDescription) {
+        try {
+            val obj = JSONObject()
+            obj.put("type", "answer")
+            obj.put("sdp", sessionDescription.description)
+
+            val wrapper = JSONObject()
+            wrapper.put("what", "answer")
+            wrapper.put("data", obj.toString())
+
+            Log.d(LoggerTags.LOG_WEBRTC, "Sending answer: $wrapper")
+
+            signallingWebSocket.send(wrapper.toString())
+        } catch (ex: JSONException) {
+            // TODO figure out how best to handle this
+            Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
+        }
     }
 
     private fun onSignallingMessageReceived(message: String) {
