@@ -17,9 +17,6 @@ import kotlinx.android.synthetic.main.activity_turret_control.*
 import org.webrtc.*
 import java.util.ArrayList
 import org.webrtc.VideoCapturer
-import org.webrtc.Logging
-
-
 
 class TurretControlActivity : AppCompatActivity(),
         WebRtcConnectionManager.WebRtcStreamReceiver {
