@@ -53,8 +53,9 @@ dependencies {
     implementation 'io.github.controlwear:virtualjoystick:1.9.2'
     implementation 'com.squareup.okhttp3:okhttp:2.3.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    implementation 'gun0912.ted:tedpermission:2.0.0'
 
-    implementation project(':libwebrtc_19324')
+    implementation 'org.webrtc:google-webrtc:1.0.22672'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0'

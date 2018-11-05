@@ -8,7 +8,7 @@ import org.json.JSONObject
 import org.webrtc.*
 
 class WebRtcConnectionManager(
-        private val context: Context,
+        private val appContext: Context,
         private val webRtcStreamReceiver: WebRtcStreamReceiver
 ): Signaller.WebRtcSignalHandler {
 
@@ -22,10 +22,22 @@ class WebRtcConnectionManager(
 
     private var peerIceServers: MutableList<PeerConnection.IceServer> = ArrayList()
 
-    private val peerConnectionFactory: PeerConnectionFactory by lazy {
-        PeerConnectionFactory.initializeAndroidGlobals(context, true)
-        val options = PeerConnectionFactory.Options()
-        PeerConnectionFactory(options)
+    val rootEglBase = RootEglBaseBuilder().rootEglBase
+
+    val peerConnectionFactory: PeerConnectionFactory by lazy {
+        // Initialize PeerConnectionFactory global options
+        val pcfInitOptions = PeerConnectionFactory.InitializationOptions.builder(appContext)
+                        .setEnableVideoHwAcceleration(true)
+                        .createInitializationOptions()
+        PeerConnectionFactory.initialize(pcfInitOptions)
+        val defaultVideoEncoderFactory = DefaultVideoEncoderFactory(
+            rootEglBase.eglBaseContext, true, true
+        )
+        val defaultVideoDecoderFactory = DefaultVideoDecoderFactory(
+            rootEglBase.eglBaseContext
+        )
+        val options = PeerConnectionFactory.Options() // Currently does nothing but is required
+        PeerConnectionFactory(options, defaultVideoEncoderFactory, defaultVideoDecoderFactory)
     }
 
     private var sdpObserver = object: CustomSdpObserver() {}
@@ -43,14 +55,11 @@ class WebRtcConnectionManager(
     }
 
     private var answerObserver = object: CustomSdpObserver() {
-
         override fun onCreateSuccess(sessionDescription: SessionDescription?) {
             super.onCreateSuccess(sessionDescription)
-
             localPeer.setLocalDescription(CustomSdpObserver(), sessionDescription)
             signaller.sendAnswer()
         }
-
     }
 
     fun connect(ip: String, port: Int) {
@@ -74,7 +83,7 @@ class WebRtcConnectionManager(
 
         localPeer = peerConnectionFactory.createPeerConnection(
                 webRtcConfig, sdpConstraints, peerConnectionObserver
-        )
+        )!!
     }
 
     override fun onOfferReceived(offer: String) {
