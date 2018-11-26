@@ -1,8 +1,0 @@
-This file contains instruction on how to set up and use the device.
-
-1. READ THE SAFETY INSTRUCTIONS provided in this directory.
-
-2. Go back and actually read them, instead of skipping that step because
-   you know what you're doing and you're too cool for instructions.
-
-3. // TODO
