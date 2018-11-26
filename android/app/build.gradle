@@ -3,14 +3,19 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         applicationId "edu.fgcu.terrorturret"
         minSdkVersion 23
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         lintOptions {
             disable 'GoogleAppIndexingWarning'
         }
@@ -19,6 +24,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
         }
     }
 }
@@ -30,25 +38,35 @@ kotlin {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.24.0"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.24.0"
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.25.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.25.0'
+
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.media:media:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+
+    implementation 'com.google.android.material:material:1.1.0-alpha01'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'io.github.controlwear:virtualjoystick:1.9.2'
+    implementation 'com.squareup.okhttp3:okhttp:2.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+
+    implementation 'org.webrtc:google-webrtc:1.0.22672'
 
     testImplementation 'junit:junit:4.12'
-
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 }
 
 gradle.buildFinished { buildResult ->
     if (buildResult.failure) {
         println ''
-        println 'Build failure? SAD!'
+        println 'Build failure? The Terror Turret will remember this...'
     } else {
         println ''
-        println 'Build successful - the terror turret will rule them all!'
+        println 'Build successful - the Terror Turret will rule them all!'
     }
 }

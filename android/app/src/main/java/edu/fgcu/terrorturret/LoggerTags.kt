@@ -7,5 +7,7 @@ package edu.fgcu.terrorturret
 object LoggerTags {
 
     const val LOG_TURRET_CONTROL = "TURRET_CONTROL"
+    const val LOG_PI_CONNECTION = "PI_CONNECTION"
+    const val LOG_WEBRTC = "WEBRTC"
 
 }
