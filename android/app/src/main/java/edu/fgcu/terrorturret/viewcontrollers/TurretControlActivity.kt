@@ -42,7 +42,6 @@ class TurretControlActivity : AppCompatActivity(),
 
         val webRtcIp = TurretConnection.turretIp
         val webRtcPort = TurretConnection.turretPort
-        //video_view.setZOrderMediaOverlay(true)
 
         try {
             webRtcConnectionManager.connect(webRtcIp, webRtcPort)
