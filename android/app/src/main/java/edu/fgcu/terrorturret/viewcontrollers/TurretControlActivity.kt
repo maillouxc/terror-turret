@@ -1,5 +1,7 @@
 package edu.fgcu.terrorturret.viewcontrollers
 
+import android.content.Context
+import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -50,15 +52,14 @@ class TurretControlActivity : AppCompatActivity(),
             // TODO attempt to recover from exception
             Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
         }
+
+        enableSpeakerphone()
     }
 
     override fun onStreamReady(mediaStream: MediaStream) {
         val videoTrack = mediaStream.videoTracks[0]
-
-        // As far as I can tell from the really bad documentation, the audio track should autoplay
         val audioTrack = mediaStream.audioTracks[0]
         audioTrack.setEnabled(true)
-
         runOnUiThread {
             try {
                 videoTrack.addSink(video_view)
@@ -66,6 +67,17 @@ class TurretControlActivity : AppCompatActivity(),
                 ex.printStackTrace()
             }
         }
+    }
+
+    /**
+     * This function is needed because WebRTC streams are treated as a call by Android,
+     * so we have to enable speakerphone if we want the audio to play through the main device
+     * speaker and not just the tiny speaker used for phone calls.
+     */
+    private fun enableSpeakerphone() {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.mode = AudioManager.MODE_IN_CALL
+        audioManager.isSpeakerphoneOn = true
     }
 
     private fun registerJoystickMovementListener() {
