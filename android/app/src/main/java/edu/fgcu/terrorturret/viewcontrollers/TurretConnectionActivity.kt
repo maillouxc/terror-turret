@@ -10,6 +10,7 @@ import edu.fgcu.terrorturret.LoggerTags
 import edu.fgcu.terrorturret.R
 import edu.fgcu.terrorturret.network.TurretConnection
 import edu.fgcu.terrorturret.utils.shake
+import edu.fgcu.terrorturret.utils.toast
 import kotlinx.android.synthetic.main.activity_turret_connection.*
 
 class TurretConnectionActivity : AppCompatActivity() {
@@ -30,6 +31,7 @@ class TurretConnectionActivity : AppCompatActivity() {
                 )
                 onConnected()
             } catch (ex: Exception) {
+                toast(R.string.toast_error_connection_failed)
                 Log.e(LoggerTags.LOG_PI_CONNECTION, ex.toString())
                 return
             }
