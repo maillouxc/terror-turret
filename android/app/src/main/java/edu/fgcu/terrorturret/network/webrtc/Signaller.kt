@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 class Signaller(
         signallingIp: String,
-        port: Int,
+        signallingPort: Int = 80,
         private var signalHandler: WebRtcSignalHandler
 ) {
 
@@ -56,7 +56,7 @@ class Signaller(
                 .addInterceptor(loggingInterceptor)
                 .build()
 
-        val webSocketUrl = "ws://$signallingIp:80/webrtc"
+        val webSocketUrl = "ws://$signallingIp:$signallingPort/webrtc"
         val webSocketRequest = Request.Builder()
                 .url(webSocketUrl)
                 .build()
@@ -91,7 +91,6 @@ class Signaller(
 
             signallingWebSocket.send(wrapper.toString())
         } catch (ex: JSONException) {
-            // TODO figure out how best to handle this
             Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
         }
     }

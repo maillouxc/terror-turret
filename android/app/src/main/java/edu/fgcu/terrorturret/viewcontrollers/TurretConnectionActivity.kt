@@ -19,6 +19,42 @@ class TurretConnectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_turret_connection)
         connect_button.setOnClickListener { onClickConnect() }
+        prefillFieldsWithPastConnectionInfo()
+    }
+
+    /**
+     * A UI quality-of-life enhancement which prefills the connection form with the info used
+     * last time, if there is any. If none was available, the fields stay blank.
+     */
+    private fun prefillFieldsWithPastConnectionInfo() {
+        val sharedPreferences = getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPreferences) {
+            val lastIpUsed = getString(PREF_LAST_IP_USED, "")
+            val lastPortUsed = getString(PREF_LAST_PORT_USED, "")
+            val lastPasswordUsed = getString(PREF_LAST_PASSWORD_USED, "")
+
+            field_turret_ip.text.append(lastIpUsed)
+            field_turret_port.text.append(lastPortUsed)
+            field_turret_password.text.append(lastPasswordUsed)
+        }
+    }
+
+    /**
+     * A UI quality-of-life enhancement which saves the connection info in the activity's shared
+     * preferences so that it can be used to prefill the form later.
+     */
+    private fun saveConnectionInfo() {
+        val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+        with (sharedPreferences.edit()) {
+            val ip = field_turret_ip.text.toString()
+            val port =  field_turret_port.text.toString()
+            val password = field_turret_password.text.toString()
+
+            putString(PREF_LAST_IP_USED, ip)
+            putString(PREF_LAST_PORT_USED, port)
+            putString(PREF_LAST_PASSWORD_USED, password)
+            apply()
+        }
     }
 
     private fun onClickConnect() {
@@ -80,12 +116,19 @@ class TurretConnectionActivity : AppCompatActivity() {
     }
 
     private fun onConnected() {
+        saveConnectionInfo()
         goToTurretControlActivity()
     }
 
     private fun goToTurretControlActivity() {
         val turretControlIntent = Intent(this, TurretControlActivity::class.java)
         startActivity(turretControlIntent)
+    }
+
+    companion object {
+        private const val PREF_LAST_IP_USED = "PREF_LAST_IP_USED"
+        private const val PREF_LAST_PORT_USED = "PREF_LAST_PORT_USED"
+        private const val PREF_LAST_PASSWORD_USED = "PREF_LAST_PASSWORD_USED"
     }
 
 }

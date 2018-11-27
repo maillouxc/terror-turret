@@ -18,8 +18,8 @@ class WebRtcConnectionManager(
 
     private lateinit var localPeer: PeerConnection
     private lateinit var signaller: Signaller
-    private var sdpConstraints = MediaConstraints()
 
+    private var sdpConstraints = MediaConstraints()
     private var peerIceServers: MutableList<PeerConnection.IceServer> = ArrayList()
 
     val rootEglBase = RootEglBaseBuilder().rootEglBase!!
@@ -54,11 +54,13 @@ class WebRtcConnectionManager(
     }
 
     private var answerObserver = object: CustomSdpObserver() {
+
         override fun onCreateSuccess(sessionDescription: SessionDescription?) {
             super.onCreateSuccess(sessionDescription)
             localPeer.setLocalDescription(CustomSdpObserver(), sessionDescription)
             signaller.sendAnswer(sessionDescription!!)
         }
+
     }
 
     fun connect(ip: String, port: Int) {
@@ -92,7 +94,7 @@ class WebRtcConnectionManager(
             )
             localPeer.createAnswer(answerObserver, sdpConstraints)
         } catch (ex: JSONException) {
-            // TODO determine how to handle
+            Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.WindowManager
@@ -12,6 +13,7 @@ import edu.fgcu.terrorturret.R
 import edu.fgcu.terrorturret.applogic.TurretController
 import edu.fgcu.terrorturret.network.TurretConnection
 import edu.fgcu.terrorturret.network.webrtc.WebRtcConnectionManager
+import edu.fgcu.terrorturret.utils.toast
 import kotlinx.android.synthetic.main.activity_turret_control.*
 import org.webrtc.*
 
@@ -48,9 +50,13 @@ class TurretControlActivity : AppCompatActivity(),
         try {
             webRtcConnectionManager.connect(webRtcIp, webRtcPort)
         } catch (ex: Exception) {
-            // TODO catch more specific exception
-            // TODO attempt to recover from exception
+            toast(R.string.toast_error_video_stream_failed)
             Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
+            Handler().postDelayed(
+            {
+                finish()
+            },
+            400)
         }
 
         enableSpeakerphone()
@@ -64,7 +70,8 @@ class TurretControlActivity : AppCompatActivity(),
             try {
                 videoTrack.addSink(video_view)
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                toast(R.string.toast_error_video_stream_failed)
+                Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
             }
         }
     }

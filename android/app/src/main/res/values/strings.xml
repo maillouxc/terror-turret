@@ -24,6 +24,7 @@
 
     <!-- Toast contents -->
     <string name="toast_error_connection_failed">Connection failed</string>
+    <string name="toast_error_video_stream_failed">Video stream failed</string>
 
     <!-- Uncategorized strings -->
     <string name="connect_to_turret">Connect to turret</string>
