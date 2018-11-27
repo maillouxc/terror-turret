@@ -95,6 +95,7 @@ long lastDebounceTime = 0;
 
 bool isFiring = false;
 long firingStartTime;
+unsigned long firingCoolDownTime = 0;
 
 int horizontalSpeedLevel = 0;
 int verticalSpeedLevel = 0;
@@ -264,9 +265,10 @@ int readAndDebounceButton()
  */
 void stopFiringIfMaxBurstLengthExceeded()
 {
-  long currentBurstDuration = millis() - firingStartTime;
-  if (currentBurstDuration > MAX_GUN_FIRING_TIME) {
+  unsigned long currentTime = millis();
+  if (currentTime - firingStartTime > MAX_GUN_FIRING_TIME) {
     setIsFiring(false);
+    firingCoolDownTime = millis() + 5000;
   }
 }
 
@@ -290,7 +292,7 @@ void setIsFiring(bool fireWeapon)
   }
   
   if (fireWeapon) {
-    if (!isSafetyOn) {
+    if (!isSafetyOn && millis() > firingCoolDownTime) {
       isFiring = true;
       firingStartTime = millis();
       digitalWrite(TRIGGER_PIN, HIGH);
