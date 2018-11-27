@@ -43,7 +43,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.25.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.25.0'
 
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.media:media:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
