@@ -64,7 +64,7 @@ class WebRtcConnectionManager(
     }
 
     fun connect(ip: String, port: Int) {
-        signaller = Signaller(ip, port, this)
+        signaller = Signaller(signallingIp = ip, signallingPort = 80, signalHandler = this)
         createPeerConnection()
         signaller.sendCallRequest()
     }
