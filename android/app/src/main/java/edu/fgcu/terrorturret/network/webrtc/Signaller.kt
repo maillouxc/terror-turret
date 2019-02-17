@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 class Signaller(
         signallingIp: String,
-        signallingPort: Int = 80,
+        signallingPort: Int,
         private var signalHandler: WebRtcSignalHandler
 ) {
 
