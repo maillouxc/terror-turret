@@ -24,43 +24,35 @@ class WebRtcConnectionManager(
 
     val rootEglBase = RootEglBaseBuilder().rootEglBase!!
 
-    val peerConnectionFactory: PeerConnectionFactory by lazy {
+    private val peerConnectionFactory: PeerConnectionFactory by lazy {
         // Initialize PeerConnectionFactory global options
         val pcfInitOptions = PeerConnectionFactory.InitializationOptions.builder(appContext)
-                        .setEnableVideoHwAcceleration(true)
-                        .createInitializationOptions()
+                .setEnableVideoHwAcceleration(true)
+                .createInitializationOptions()
         PeerConnectionFactory.initialize(pcfInitOptions)
-        val defaultVideoEncoderFactory = DefaultVideoEncoderFactory(
-            rootEglBase.eglBaseContext, true, true
-        )
-        val defaultVideoDecoderFactory = DefaultVideoDecoderFactory(rootEglBase.eglBaseContext)
+        val videoEncoderFactory = DefaultVideoEncoderFactory(rootEglBase.eglBaseContext, true, true)
+        val videoDecoderFactory = DefaultVideoDecoderFactory(rootEglBase.eglBaseContext)
         val options = PeerConnectionFactory.Options() // Currently does nothing but is required
-
-        PeerConnectionFactory(options, defaultVideoEncoderFactory, defaultVideoDecoderFactory)
+        PeerConnectionFactory(options, videoEncoderFactory, videoDecoderFactory)
     }
 
     private var sdpObserver = object: CustomSdpObserver() {}
 
     private var peerConnectionObserver = object: CustomPeerConnectionObserver() {
-
         override fun onIceCandidate(iceCandidate: IceCandidate?) {
             onIceCandidateReceived(iceCandidate)
         }
-
         override fun onAddStream(mediaStream: MediaStream?) {
             gotRemoteStream(mediaStream)
         }
-
     }
 
     private var answerObserver = object: CustomSdpObserver() {
-
         override fun onCreateSuccess(sessionDescription: SessionDescription?) {
             super.onCreateSuccess(sessionDescription)
             localPeer.setLocalDescription(CustomSdpObserver(), sessionDescription)
             signaller.sendAnswer(sessionDescription!!)
         }
-
     }
 
     fun connect(ip: String) {
@@ -76,8 +68,7 @@ class WebRtcConnectionManager(
             bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE
             rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.REQUIRE
             continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
-            // Use ECDSA encryption
-            keyType = PeerConnection.KeyType.ECDSA
+            keyType = PeerConnection.KeyType.ECDSA // Use ECDSA encryption
         }
 
         localPeer = peerConnectionFactory.createPeerConnection(

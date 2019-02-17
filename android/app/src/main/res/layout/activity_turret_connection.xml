@@ -49,10 +49,12 @@
         android:ems="10"
         android:inputType="text"
         android:minWidth="240dp"
+        android:importantForAutofill="no"
         app:layout_constraintBottom_toTopOf="@+id/turret_port_field_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/turret_ip_field_label" />
+        app:layout_constraintTop_toBottomOf="@+id/turret_ip_field_label"
+        tools:ignore="UnusedAttribute" />
 
     <TextView
         android:id="@+id/turret_port_field_label"
@@ -73,10 +75,12 @@
         android:layout_marginStart="8dp"
         android:ems="10"
         android:inputType="number"
+        android:importantForAutofill="no"
         app:layout_constraintBottom_toTopOf="@+id/password_field_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/turret_port_field_label" />
+        app:layout_constraintTop_toBottomOf="@+id/turret_port_field_label"
+        tools:ignore="UnusedAttribute" />
 
     <TextView
         android:id="@+id/password_field_label"
@@ -98,9 +102,11 @@
         android:ems="10"
         android:inputType="textPassword"
         android:minWidth="240dp"
+        android:autofillHints="password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_field_label" />
+        app:layout_constraintTop_toBottomOf="@+id/password_field_label"
+        tools:ignore="UnusedAttribute" />
 
     <Button
         android:id="@+id/connect_button"

@@ -80,6 +80,7 @@
         app:layout_constraintEnd_toEndOf="@+id/video_view"
         app:layout_constraintStart_toStartOf="@+id/video_view"
         app:layout_constraintTop_toTopOf="@+id/video_view"
-        app:srcCompat="@drawable/crosshair" />
+        app:srcCompat="@drawable/crosshair"
+        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
