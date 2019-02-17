@@ -45,10 +45,9 @@ class TurretControlActivity : AppCompatActivity(),
         video_view.init(webRtcConnectionManager.rootEglBase.eglBaseContext, null)
 
         val webRtcIp = TurretConnection.turretIp
-        val webRtcPort = TurretConnection.turretPort
 
         try {
-            webRtcConnectionManager.connect(webRtcIp, webRtcPort)
+            webRtcConnectionManager.connect(webRtcIp)
         } catch (ex: Exception) {
             toast(R.string.toast_error_video_stream_failed)
             Log.e(LoggerTags.LOG_WEBRTC, ex.toString())

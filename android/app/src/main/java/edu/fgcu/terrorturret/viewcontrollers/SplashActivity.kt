@@ -4,9 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import edu.fgcu.terrorturret.R
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.android.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * The activity responsible for displaying the application's splash screen.
@@ -32,7 +33,7 @@ class SplashActivity : AppCompatActivity() {
      * we can reduce or eliminate that delay.
      */
     private fun goToMainActivityAfterSlightDelay() {
-        launch(UI) {
+        launch(Dispatchers.Main) {
             delay(SPLASH_DURATION_MS)
             finish()
             startActivity(Intent(this@SplashActivity, TurretConnectionActivity::class.java))
@@ -40,7 +41,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val SPLASH_DURATION_MS = 1500
+        private const val SPLASH_DURATION_MS = 1500L
     }
 
 }
