@@ -1,11 +1,16 @@
 package edu.fgcu.terrorturret.network.webrtc
 
+import android.Manifest
 import android.content.Context
 import android.util.Log
+import com.gun0912.tedpermission.PermissionListener
 import edu.fgcu.terrorturret.LoggerTags
 import org.json.JSONException
 import org.json.JSONObject
 import org.webrtc.*
+import android.widget.Toast
+import com.gun0912.tedpermission.TedPermission
+
 
 class WebRtcConnectionManager(
         private val appContext: Context,
@@ -14,6 +19,27 @@ class WebRtcConnectionManager(
 
     interface WebRtcStreamReceiver {
         fun onStreamReady(mediaStream: MediaStream)
+    }
+
+    /**
+     * Used to handle permission request responses
+     */
+    private var permissionsListener: PermissionListener = object : PermissionListener {
+        override fun onPermissionGranted() {
+            Toast.makeText(appContext, "Permission Granted", Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onPermissionDenied(deniedPermissions: List<String>) {
+            Toast.makeText(appContext, "Microphone permission rejected", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    init {
+        TedPermission.with(appContext)
+                .setPermissionListener(permissionsListener)
+                .setDeniedMessage("We need microphone permissions to make things work!")
+                .setPermissions(Manifest.permission.RECORD_AUDIO)
+                .check()
     }
 
     private lateinit var localPeer: PeerConnection
@@ -71,9 +97,19 @@ class WebRtcConnectionManager(
             keyType = PeerConnection.KeyType.ECDSA // Use ECDSA encryption
         }
 
+        // Send local audio to turret
+        val audioConstraints = MediaConstraints()
+        val localAudioSource = peerConnectionFactory.createAudioSource(audioConstraints)
+        val localAudioTrack = peerConnectionFactory.createAudioTrack("101", localAudioSource)
+        val outboundStream = peerConnectionFactory.createLocalMediaStream("102")
+        outboundStream.addTrack(localAudioTrack)
+
         localPeer = peerConnectionFactory.createPeerConnection(
                 webRtcConfig, MediaConstraints(), peerConnectionObserver
         )!!
+
+
+        localPeer.addStream(outboundStream)
     }
 
     override fun onOfferReceived(offer: String) {
