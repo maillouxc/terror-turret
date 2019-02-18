@@ -10,16 +10,18 @@ object TurretConnection {
 
     var turretIp: String = ""
     var turretPort: Int  = 9000
+    var protocol: String = "ws"
 
     private var timeout = 5
     private var turretPassword: String = ""
 
     private lateinit var webSocket: WebSocket
 
-    fun init(turretIp: String, turretPort: Int, turretPassword: String) {
+    fun init(turretIp: String, turretPort: Int, turretPassword: String, protocol: String) {
         this.turretIp = turretIp
         this.turretPort = turretPort
         this.turretPassword = turretPassword
+        this.protocol = protocol
 
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
@@ -33,7 +35,7 @@ object TurretConnection {
         val webSocketPort = turretPort + 1
 
         val webSocketRequest = Request.Builder()
-                .url("ws://$turretIp:$webSocketPort/")
+                .url("$protocol://$turretIp:$webSocketPort/")
                 .build()
 
         webSocket = okHttpClient.newWebSocket(webSocketRequest, webSocketListener)
