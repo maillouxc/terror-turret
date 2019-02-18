@@ -67,7 +67,7 @@ class TurretConnectionActivity : AppCompatActivity() {
                 TurretConnection.init(
                         field_turret_ip.text.toString(),
                         field_turret_port.text.toString().toInt(),
-                        field_turret_password.text.toString()
+                        field_turret_password.text.toString(),
                         if (field_ssl.isChecked) "wss" else "ws" //Use SSL or do not use SSL
                 )
                 onConnected()
