@@ -5,6 +5,9 @@ import edu.fgcu.scaryturret.LoggerTags.LOG_TURRET_CONTROL
 import edu.fgcu.scaryturret.network.TurretConnection
 import kotlin.math.roundToInt
 
+/**
+ * Singleton object used to control the gun itself.
+ */
 object TurretController {
 
     private const val NUM_SPEED_SETTINGS = 10
@@ -21,18 +24,25 @@ object TurretController {
     fun fireZeMissiles() {
         if (!isSafetyOn) {
             Log.i(LOG_TURRET_CONTROL, "Firing ze missiles!")
-            val command = TurretCommands.CMD_FIRE
-            TurretConnection.sendTurretCommand(command)
+            TurretConnection.sendTurretCommand(TurretCommands.CMD_FIRE)
         } else {
             Log.i(LOG_TURRET_CONTROL, "Cannot fire, safety is on!")
         }
     }
 
+    /**
+     * Used to tell the gun to stop firing. The gun will stop on it's own if this is never sent,
+     * but we should always call this method at the end of a burst, otherwise the gun will continue
+     * to fire until it's overheating limit is reached.
+     */
     fun ceaseFire() {
         Log.i(LOG_TURRET_CONTROL, "Ceasing fire!")
         TurretConnection.sendTurretCommand(TurretCommands.CMD_CEASE_FIRE)
     }
 
+    /**
+     * Sends the command to engage the gun's safety.
+     */
     fun engageSafety(safetyOn: Boolean) {
         val command = if (safetyOn) {
             TurretCommands.CMD_SAFETY_ON
