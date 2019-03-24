@@ -31,20 +31,20 @@ class Signaller(
     private val webSocketListener = object : WebSocketListener() {
 
         override fun onOpen(webSocket: WebSocket?, response: Response?) {
-            Log.d(LoggerTags.LOG_WEBRTC, "Signaller connection opened.")
+            Log.d(LOG_WEBRTC, "Signaller connection opened.")
         }
 
         override fun onMessage(webSocket: WebSocket?, text: String?) {
-            Log.i(LoggerTags.LOG_WEBRTC, "Signaller message received: $text")
+            Log.i(LOG_WEBRTC, "Signaller message received: $text")
             if (text != null) { onSignallingMessageReceived(text) }
         }
 
         override fun onClosed(webSocket: WebSocket?, code: Int, reason: String?) {
-            Log.w(LoggerTags.LOG_WEBRTC, "Signaller connection closed - reason: $reason")
+            Log.w(LOG_WEBRTC, "Signaller connection closed - reason: $reason")
         }
 
         override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
-            Log.e(LoggerTags.LOG_WEBRTC, "Signaller connection failure: $t")
+            Log.e(LOG_WEBRTC, "Signaller connection failure: $t")
         }
 
     }
@@ -58,7 +58,7 @@ class Signaller(
                 .addInterceptor(loggingInterceptor)
                 .build()
 
-        val webSocketUrl = "$signallingProtocol//$signallingIp:$signallingPort/webrtc"
+        val webSocketUrl = "$signallingProtocol://$signallingIp:$signallingPort/webrtc"
         Log.i(LOG_WEBRTC, "Attempting to connect to signalling server: $webSocketUrl")
         val webSocketRequest = Request.Builder()
                 .url(webSocketUrl)
@@ -102,7 +102,7 @@ class Signaller(
         val messageObject = Gson().fromJson(message, SignallingMessageDto::class.java)
         when (messageObject.what) {
             "offer" -> { signalHandler.onOfferReceived(messageObject.data) }
-            "message" -> { log("Message received: ${messageObject.data}") }
+            "message" -> { Log.i(LOG_WEBRTC, "Message received: ${messageObject.data}") }
             "iceCandidate" -> {
                 try {
                     onIceCandidateReceived(JSONObject(messageObject.data))
@@ -129,15 +129,11 @@ class Signaller(
     }
 
     private fun onDoneReceivingIceCandidates() {
-        log("Done receiving trickle ICE candidates!")
+        Log.i(LOG_WEBRTC, "Done receiving trickle ICE candidates!")
     }
 
     fun cleanup() {
         signallingWebSocket.close(WEBSOCKET_CLOSE_CODE_NORMAL, "App closed")
-    }
-
-    private fun log(msg: String) {
-        Log.i(LoggerTags.LOG_WEBRTC, msg)
     }
 
     companion object {
