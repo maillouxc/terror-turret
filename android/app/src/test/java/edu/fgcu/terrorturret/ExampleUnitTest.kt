@@ -1,7 +1,6 @@
 package edu.fgcu.terrorturret
 
 import org.junit.Test
-
 import org.junit.Assert.*
 
 /**
