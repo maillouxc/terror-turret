@@ -1,7 +1,7 @@
 package edu.fgcu.scaryturret
 
-import androidx.test.InstrumentationRegistry
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,7 +19,7 @@ class ExampleInstrumentedTest {
     @Test
     fun test_universe_not_broken() {
         // Context of the app under test.
-        val appContext = InstrumentationRegistry.getTargetContext()
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("edu.fgcu.terrorturret", appContext.packageName)
     }
 
