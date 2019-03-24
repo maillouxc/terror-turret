@@ -18,6 +18,9 @@
     <string name="field_password">Password</string>
     <string name="field_turret_ip">Turret IP Address</string>
     <string name="field_turret_port">Port</string>
+    <string name="field_ssl">Use SSL</string>
+    <string name="field_ssl_no">No</string>
+    <string name="field_ssl_yes">Yes</string>
 
     <!-- Form field validation error messages -->
     <string name="validation_error_required_field">Required</string>

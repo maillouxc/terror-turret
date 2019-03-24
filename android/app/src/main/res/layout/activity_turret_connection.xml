@@ -102,6 +102,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password_field_label" />
 
+    <Switch
+        android:id="@+id/field_ssl"
+        android:layout_width="120dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:checked="false"
+        android:ems="10"
+        android:showText="false"
+        android:text="@string/field_ssl"
+        android:textOff="@string/field_ssl_no"
+        android:textOn="@string/field_ssl_yes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.174"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/field_turret_password" />
+
     <Button
         android:id="@+id/connect_button"
         android:layout_width="88dp"
@@ -115,6 +133,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/field_turret_password"
-        app:layout_constraintVertical_bias="0.18" />
+        app:layout_constraintVertical_bias="0.25" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

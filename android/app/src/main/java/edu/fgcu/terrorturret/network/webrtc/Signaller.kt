@@ -14,8 +14,9 @@ import org.webrtc.SessionDescription
 import java.util.concurrent.TimeUnit
 
 class Signaller(
+        signalingProtocol: String = "wss",
         signallingIp: String,
-        signallingPort: Int,
+        signallingPort: Int = 9000,
         private var signalHandler: WebRtcSignalHandler
 ) {
 
@@ -56,7 +57,8 @@ class Signaller(
                 .addInterceptor(loggingInterceptor)
                 .build()
 
-        val webSocketUrl = "ws://$signallingIp:$signallingPort/webrtc"
+        val webSocketUrl = "$signalingProtocol://$signallingIp:$signallingPort/stream/webrtc"
+        Log.i(LoggerTags.LOG_WEBRTC, "ARGS--> protocol: $signalingProtocol, IP: $signallingIp, port: $signallingPort")
         val webSocketRequest = Request.Builder()
                 .url(webSocketUrl)
                 .build()

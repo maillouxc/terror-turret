@@ -32,10 +32,12 @@ class TurretConnectionActivity : AppCompatActivity() {
             val lastIpUsed = getString(PREF_LAST_IP_USED, "")
             val lastPortUsed = getString(PREF_LAST_PORT_USED, "")
             val lastPasswordUsed = getString(PREF_LAST_PASSWORD_USED, "")
+            val lastSSLUsed = getBoolean(PREF_LAST_SSL_USED, false)
 
             field_turret_ip.text.append(lastIpUsed)
             field_turret_port.text.append(lastPortUsed)
             field_turret_password.text.append(lastPasswordUsed)
+            field_ssl.isChecked = lastSSLUsed
         }
     }
 
@@ -49,10 +51,12 @@ class TurretConnectionActivity : AppCompatActivity() {
             val ip = field_turret_ip.text.toString()
             val port =  field_turret_port.text.toString()
             val password = field_turret_password.text.toString()
+            val ssl = field_ssl.isChecked
 
             putString(PREF_LAST_IP_USED, ip)
             putString(PREF_LAST_PORT_USED, port)
             putString(PREF_LAST_PASSWORD_USED, password)
+            putBoolean(PREF_LAST_SSL_USED, ssl)
             apply()
         }
     }
@@ -63,7 +67,8 @@ class TurretConnectionActivity : AppCompatActivity() {
                 TurretConnection.init(
                         field_turret_ip.text.toString(),
                         field_turret_port.text.toString().toInt(),
-                        field_turret_password.text.toString()
+                        field_turret_password.text.toString(),
+                        if (field_ssl.isChecked) "wss" else "ws" //Use SSL or do not use SSL
                 )
                 onConnected()
             } catch (ex: Exception) {
@@ -129,6 +134,7 @@ class TurretConnectionActivity : AppCompatActivity() {
         private const val PREF_LAST_IP_USED = "PREF_LAST_IP_USED"
         private const val PREF_LAST_PORT_USED = "PREF_LAST_PORT_USED"
         private const val PREF_LAST_PASSWORD_USED = "PREF_LAST_PASSWORD_USED"
+        private const val PREF_LAST_SSL_USED = "PREF_LAST_SSL_USED"
     }
 
 }
