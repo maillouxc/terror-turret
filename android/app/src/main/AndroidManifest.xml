@@ -33,7 +33,7 @@
         <activity
             android:name=".viewcontrollers.TurretConnectionActivity"
             android:screenOrientation="portrait"/>
-        
+
         <activity
             android:name=".viewcontrollers.TurretControlActivity"
             android:theme="@style/AppTheme.NoActionBar"
