@@ -35,6 +35,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginTop="64dp"
         android:text="@string/field_turret_ip"
+        android:labelFor="@id/field_turret_ip"
         app:layout_constraintBottom_toTopOf="@+id/field_turret_ip"
         app:layout_constraintStart_toStartOf="@+id/field_turret_ip"
         app:layout_constraintTop_toBottomOf="@+id/turret_connection_page_label"
@@ -63,6 +64,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/field_turret_port"
+        android:labelFor="@id/field_turret_port"
         app:layout_constraintBottom_toTopOf="@+id/field_turret_port"
         app:layout_constraintStart_toStartOf="@+id/field_turret_port"
         app:layout_constraintTop_toBottomOf="@+id/field_turret_ip" />
@@ -89,6 +91,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/field_password"
+        android:labelFor="@id/field_turret_password"
         app:layout_constraintBottom_toTopOf="@+id/field_turret_password"
         app:layout_constraintStart_toStartOf="@+id/field_turret_password"
         app:layout_constraintTop_toBottomOf="@+id/field_turret_port" />
@@ -112,15 +115,25 @@
         android:id="@+id/connect_button"
         android:layout_width="88dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/btn_connect"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/field_turret_password"
-        app:layout_constraintVertical_bias="0.18" />
+        app:layout_constraintTop_toBottomOf="@+id/field_ssl"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <CheckBox
+        android:id="@+id/field_ssl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/field_ssl"
+        app:layout_constraintEnd_toEndOf="@+id/field_turret_password"
+        app:layout_constraintStart_toStartOf="@+id/field_turret_password"
+        app:layout_constraintTop_toBottomOf="@+id/field_turret_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

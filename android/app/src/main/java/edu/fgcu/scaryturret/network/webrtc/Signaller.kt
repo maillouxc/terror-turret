@@ -3,6 +3,7 @@ package edu.fgcu.scaryturret.network.webrtc
 import android.util.Log
 import com.google.gson.Gson
 import edu.fgcu.scaryturret.LoggerTags
+import edu.fgcu.scaryturret.LoggerTags.LOG_WEBRTC
 import edu.fgcu.scaryturret.network.webrtc.dtos.CallRequestOptionsDto
 import edu.fgcu.scaryturret.network.webrtc.dtos.SignallingMessageDto
 import okhttp3.*
@@ -14,8 +15,9 @@ import org.webrtc.SessionDescription
 import java.util.concurrent.TimeUnit
 
 class Signaller(
+        signallingProtocol: String = "wss",
         signallingIp: String,
-        signallingPort: Int,
+        signallingPort: Int = 9000,
         private var signalHandler: WebRtcSignalHandler
 ) {
 
@@ -56,7 +58,8 @@ class Signaller(
                 .addInterceptor(loggingInterceptor)
                 .build()
 
-        val webSocketUrl = "ws://$signallingIp:$signallingPort/webrtc"
+        val webSocketUrl = "$signallingProtocol//$signallingIp:$signallingPort/webrtc"
+        Log.i(LOG_WEBRTC, "Attempting to connect to signalling server: $webSocketUrl")
         val webSocketRequest = Request.Builder()
                 .url(webSocketUrl)
                 .build()
