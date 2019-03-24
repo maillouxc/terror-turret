@@ -1,7 +1,7 @@
-package edu.fgcu.terrorturret.network
+package edu.fgcu.scaryturret.network
 
 import android.util.Log
-import edu.fgcu.terrorturret.LoggerTags
+import edu.fgcu.scaryturret.LoggerTags
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit

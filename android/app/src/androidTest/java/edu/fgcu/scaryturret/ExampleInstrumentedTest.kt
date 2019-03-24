@@ -1,4 +1,4 @@
-package edu.fgcu.terrorturret
+package edu.fgcu.scaryturret
 
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4

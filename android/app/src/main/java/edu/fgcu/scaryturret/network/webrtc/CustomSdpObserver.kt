@@ -1,4 +1,4 @@
-package edu.fgcu.terrorturret.network.webrtc
+package edu.fgcu.scaryturret.network.webrtc
 
 import org.webrtc.SdpObserver
 import org.webrtc.SessionDescription

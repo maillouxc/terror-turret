@@ -1,9 +1,9 @@
-package edu.fgcu.terrorturret.viewcontrollers
+package edu.fgcu.scaryturret.viewcontrollers
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import edu.fgcu.terrorturret.R
+import edu.fgcu.scaryturret.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.Main
 import kotlinx.coroutines.delay

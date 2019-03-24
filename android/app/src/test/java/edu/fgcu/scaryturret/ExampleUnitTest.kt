@@ -1,4 +1,4 @@
-package edu.fgcu.terrorturret
+package edu.fgcu.scaryturret
 
 import org.junit.Test
 import org.junit.Assert.*

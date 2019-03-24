@@ -1,8 +1,8 @@
-package edu.fgcu.terrorturret.applogic
+package edu.fgcu.scaryturret.applogic
 
 import android.util.Log
-import edu.fgcu.terrorturret.LoggerTags.LOG_TURRET_CONTROL
-import edu.fgcu.terrorturret.network.TurretConnection
+import edu.fgcu.scaryturret.LoggerTags.LOG_TURRET_CONTROL
+import edu.fgcu.scaryturret.network.TurretConnection
 import kotlin.math.roundToInt
 
 object TurretController {

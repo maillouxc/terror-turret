@@ -9,7 +9,8 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        applicationId "edu.fgcu.terrorturret"
+        // So, it turns out ADB freaks fuck out if you have the substring 'error' in applicationId
+        applicationId "edu.fgcu.scaryturret"
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
@@ -22,13 +23,18 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             minifyEnabled false
         }
     }
+
+    // Gradle automatically adds 'android.test.runner' as a dependency
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+    useLibrary 'android.test.mock'
 }
 
 dependencies {
@@ -61,6 +67,7 @@ dependencies {
 
     // Testing related dependencies
     testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }

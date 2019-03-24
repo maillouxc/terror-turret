@@ -1,4 +1,4 @@
-package edu.fgcu.terrorturret.viewcontrollers
+package edu.fgcu.scaryturret.viewcontrollers
 
 import android.content.Context
 import android.content.Intent
@@ -6,11 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Vibrator
 import android.util.Log
-import edu.fgcu.terrorturret.LoggerTags
-import edu.fgcu.terrorturret.R
-import edu.fgcu.terrorturret.network.TurretConnection
-import edu.fgcu.terrorturret.utils.shake
-import edu.fgcu.terrorturret.utils.toast
+import edu.fgcu.scaryturret.LoggerTags
+import edu.fgcu.scaryturret.R
+import edu.fgcu.scaryturret.network.TurretConnection
+import edu.fgcu.scaryturret.utils.shake
+import edu.fgcu.scaryturret.utils.toast
 import kotlinx.android.synthetic.main.activity_turret_connection.*
 
 class TurretConnectionActivity : AppCompatActivity() {

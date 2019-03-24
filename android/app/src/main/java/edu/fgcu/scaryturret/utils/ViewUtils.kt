@@ -1,8 +1,8 @@
-package edu.fgcu.terrorturret.utils
+package edu.fgcu.scaryturret.utils
 
 import android.animation.AnimatorInflater
 import android.view.View
-import edu.fgcu.terrorturret.R
+import edu.fgcu.scaryturret.R
 
 /**
  * Rapidly buzzes/shakes the view horizontally a little for half a second.

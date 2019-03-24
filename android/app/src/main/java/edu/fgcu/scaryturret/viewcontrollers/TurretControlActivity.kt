@@ -1,4 +1,4 @@
-package edu.fgcu.terrorturret.viewcontrollers
+package edu.fgcu.scaryturret.viewcontrollers
 
 import android.content.Context
 import android.media.AudioManager
@@ -8,12 +8,12 @@ import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.WindowManager
-import edu.fgcu.terrorturret.LoggerTags
-import edu.fgcu.terrorturret.R
-import edu.fgcu.terrorturret.applogic.TurretController
-import edu.fgcu.terrorturret.network.TurretConnection
-import edu.fgcu.terrorturret.network.webrtc.WebRtcConnectionManager
-import edu.fgcu.terrorturret.utils.toast
+import edu.fgcu.scaryturret.LoggerTags
+import edu.fgcu.scaryturret.R
+import edu.fgcu.scaryturret.applogic.TurretController
+import edu.fgcu.scaryturret.network.TurretConnection
+import edu.fgcu.scaryturret.network.webrtc.WebRtcConnectionManager
+import edu.fgcu.scaryturret.utils.toast
 import kotlinx.android.synthetic.main.activity_turret_control.*
 import org.webrtc.*
 

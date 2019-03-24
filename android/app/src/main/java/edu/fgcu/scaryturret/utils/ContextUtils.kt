@@ -1,4 +1,4 @@
-package edu.fgcu.terrorturret.utils
+package edu.fgcu.scaryturret.utils
 
 import android.content.Context
 import android.widget.Toast

@@ -1,10 +1,10 @@
-package edu.fgcu.terrorturret.network.webrtc
+package edu.fgcu.scaryturret.network.webrtc
 
 import android.util.Log
 import com.google.gson.Gson
-import edu.fgcu.terrorturret.LoggerTags
-import edu.fgcu.terrorturret.network.webrtc.dtos.CallRequestOptionsDto
-import edu.fgcu.terrorturret.network.webrtc.dtos.SignallingMessageDto
+import edu.fgcu.scaryturret.LoggerTags
+import edu.fgcu.scaryturret.network.webrtc.dtos.CallRequestOptionsDto
+import edu.fgcu.scaryturret.network.webrtc.dtos.SignallingMessageDto
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONException

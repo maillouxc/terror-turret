@@ -1,10 +1,10 @@
-package edu.fgcu.terrorturret.network.webrtc
+package edu.fgcu.scaryturret.network.webrtc
 
 import android.Manifest
 import android.content.Context
 import android.util.Log
 import com.gun0912.tedpermission.PermissionListener
-import edu.fgcu.terrorturret.LoggerTags
+import edu.fgcu.scaryturret.LoggerTags
 import org.json.JSONException
 import org.json.JSONObject
 import org.webrtc.*

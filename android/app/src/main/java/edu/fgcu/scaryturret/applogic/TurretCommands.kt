@@ -1,4 +1,4 @@
-package edu.fgcu.terrorturret.applogic
+package edu.fgcu.scaryturret.applogic
 
 object TurretCommands {
 

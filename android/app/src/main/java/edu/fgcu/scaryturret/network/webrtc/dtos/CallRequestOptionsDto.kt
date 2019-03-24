@@ -1,4 +1,4 @@
-package edu.fgcu.terrorturret.network.webrtc.dtos
+package edu.fgcu.scaryturret.network.webrtc.dtos
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,4 +1,4 @@
-package edu.fgcu.terrorturret
+package edu.fgcu.scaryturret
 
 /**
  * This object contains variables defining "tag" strings that can be used to categorize logging
