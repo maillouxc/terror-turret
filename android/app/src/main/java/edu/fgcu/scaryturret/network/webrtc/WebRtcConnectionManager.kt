@@ -1,15 +1,11 @@
 package edu.fgcu.scaryturret.network.webrtc
 
-import android.Manifest
 import android.content.Context
 import android.util.Log
-import com.gun0912.tedpermission.PermissionListener
-import edu.fgcu.scaryturret.LoggerTags
 import org.json.JSONException
 import org.json.JSONObject
 import org.webrtc.*
-import android.widget.Toast
-import com.gun0912.tedpermission.TedPermission
+import edu.fgcu.scaryturret.LoggerTags.LOG_WEBRTC
 
 
 class WebRtcConnectionManager(
@@ -19,27 +15,7 @@ class WebRtcConnectionManager(
 
     interface WebRtcStreamReceiver {
         fun onStreamReady(mediaStream: MediaStream)
-    }
-
-    /**
-     * Used to handle permission request responses
-     */
-    private var permissionsListener: PermissionListener = object : PermissionListener {
-        override fun onPermissionGranted() {
-            Toast.makeText(appContext, "Permission Granted", Toast.LENGTH_SHORT).show()
-        }
-
-        override fun onPermissionDenied(deniedPermissions: List<String>) {
-            Toast.makeText(appContext, "Microphone permission rejected", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    init {
-        TedPermission.with(appContext)
-                .setPermissionListener(permissionsListener)
-                .setDeniedMessage("We need microphone permissions to make things work!")
-                .setPermissions(Manifest.permission.RECORD_AUDIO)
-                .check()
+        fun onSignallingConnectionFailed(msg: String)
     }
 
     private lateinit var localPeer: PeerConnection
@@ -81,11 +57,8 @@ class WebRtcConnectionManager(
         }
     }
 
-    fun connect(protocol: String, ip: String, port: Int) {
-        signaller = Signaller(signallingProtocol = protocol,
-                              signallingIp = ip,
-                              signallingPort = port,
-                              signalHandler = this)
+    fun connect(signallingProtocol: String, signallingIp: String, signallingPort: Int) {
+        signaller = Signaller(signallingProtocol, signallingIp, signallingPort, signalHandler = this)
         createPeerConnection()
         signaller.sendCallRequest()
     }
@@ -107,14 +80,18 @@ class WebRtcConnectionManager(
         val outboundStream = peerConnectionFactory.createLocalMediaStream("102")
         outboundStream.addTrack(localAudioTrack)
 
+        @Suppress("DEPRECATION")
         localPeer = peerConnectionFactory.createPeerConnection(
                 webRtcConfig, MediaConstraints(), peerConnectionObserver
         )!!
 
-
         localPeer.addStream(outboundStream)
     }
 
+    /**
+     * Called when the remote peer's call offer is received - responds by answering the offer,
+     * and sets the remote peer description.
+     */
     override fun onOfferReceived(offer: String) {
         try {
             val offerSdp = JSONObject(offer).getString("sdp")
@@ -124,20 +101,34 @@ class WebRtcConnectionManager(
             )
             localPeer.createAnswer(answerObserver, sdpConstraints)
         } catch (ex: JSONException) {
-            Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
+            Log.e(LOG_WEBRTC, ex.toString())
         }
     }
 
+    /**
+     * Called when an ICE candidate is received by the remote peer.
+     * Adds the new candidate to the list of available ICE candidates.
+     */
     override fun onIceCandidateReceived(iceCandidate: IceCandidate?) {
         if (iceCandidate != null) {
             localPeer.addIceCandidate(iceCandidate)
         }
     }
 
+    /**
+     * Called when the signaller WebSocket connection fails.
+     */
+    override fun onConnectionFailure(msg: String) {
+        // Just pass the message through to the calling class
+        webRtcStreamReceiver.onSignallingConnectionFailed(msg)
+    }
+
     private fun gotRemoteStream(mediaStream: MediaStream?) {
-        Log.i(LoggerTags.LOG_WEBRTC, "Got remote stream")
+        Log.i(LOG_WEBRTC, "Got remote stream")
         if (mediaStream != null) {
             webRtcStreamReceiver.onStreamReady(mediaStream)
+        } else {
+            Log.w(LOG_WEBRTC, "Remote stream was null!")
         }
     }
 

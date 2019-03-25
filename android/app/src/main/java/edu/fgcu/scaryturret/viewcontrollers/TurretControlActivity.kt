@@ -5,10 +5,12 @@ import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.Log
 import android.view.MotionEvent
 import android.view.WindowManager
-import edu.fgcu.scaryturret.LoggerTags
+import edu.fgcu.scaryturret.LoggerTags.LOG_WEBRTC
 import edu.fgcu.scaryturret.R
 import edu.fgcu.scaryturret.applogic.TurretController
 import edu.fgcu.scaryturret.network.TurretConnection
@@ -30,9 +32,11 @@ class TurretControlActivity : AppCompatActivity(),
         registerClickListeners()
         registerJoystickMovementListener()
         onClickArmSwitch(false)
+    }
 
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
         webRtcConnectionManager = WebRtcConnectionManager(this, this)
-
         beginStreamingVideo()
     }
 
@@ -52,17 +56,14 @@ class TurretControlActivity : AppCompatActivity(),
             webRtcConnectionManager.connect(webRtcProtocol, webRtcIp, webRtcPort)
         } catch (ex: Exception) {
             toast(R.string.toast_error_video_stream_failed)
-            Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
-            Handler().postDelayed(
-            {
-                finish()
-            },
-            400)
+            Log.e(LOG_WEBRTC, ex.toString())
+            Handler().postDelayed({ finish() }, 400)
         }
 
         enableSpeakerphone()
     }
 
+    // TODO ability to mute remote audio stream
     override fun onStreamReady(mediaStream: MediaStream) {
         val videoTrack = mediaStream.videoTracks[0]
         val audioTrack = mediaStream.audioTracks[0]
@@ -72,8 +73,20 @@ class TurretControlActivity : AppCompatActivity(),
                 videoTrack.addSink(video_view)
             } catch (ex: Exception) {
                 toast(R.string.toast_error_video_stream_failed)
-                Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
+                Log.e(LOG_WEBRTC, ex.toString())
             }
+        }
+    }
+
+    /**
+     * Called when connecting to the signalling server fails.
+     *
+     * Displays a toast with an error message, and returns to the previous screen.
+     */
+    override fun onSignallingConnectionFailed(msg: String) {
+        runOnUiThread {
+            toast("Signalling connection failed")
+            finish()
         }
     }
 
@@ -88,14 +101,13 @@ class TurretControlActivity : AppCompatActivity(),
         audioManager.isSpeakerphoneOn = true
     }
 
+    // TODO fun to disable speakerphone
+
     private fun registerJoystickMovementListener() {
         analog_stick.setOnMoveListener({ angle, strength ->
             // Strength is a percentage value [0, 100]
             // Angle is degrees measured from the right, counterclockwise.
-
             // We need to convert this to a normalized value [0, 1] in (x,y) coordinates
-            // I don't have time to rewrite the library to allow this, so for now this is how we
-            // do it, but ideally this functionality should be baked in to the library
 
             val angleInRadians = Math.toRadians(angle.toDouble())
             val normalizedX = (strength / 100.0) * Math.cos(angleInRadians)
@@ -142,6 +154,7 @@ class TurretControlActivity : AppCompatActivity(),
     }
 
     companion object {
+        // TODO update
         const val JOYSTICK_UPDATE_FREQ_HZ = 10
     }
 

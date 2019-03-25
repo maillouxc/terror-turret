@@ -1,11 +1,15 @@
 package edu.fgcu.scaryturret.viewcontrollers
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Vibrator
 import android.util.Log
+import android.widget.Toast
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import edu.fgcu.scaryturret.LoggerTags
 import edu.fgcu.scaryturret.R
 import edu.fgcu.scaryturret.network.TurretConnection
@@ -15,11 +19,31 @@ import kotlinx.android.synthetic.main.activity_turret_connection.*
 
 class TurretConnectionActivity : AppCompatActivity() {
 
+    /**
+     * Used to handle permission request responses.
+     */
+    private var permissionsListener: PermissionListener = object : PermissionListener {
+        override fun onPermissionGranted() {
+            Toast.makeText(applicationContext, "Permission Granted", Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onPermissionDenied(deniedPermissions: List<String>) {
+            Toast.makeText(applicationContext, "Microphone permission rejected", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_turret_connection)
         connect_button.setOnClickListener { onClickConnect() }
         prefillFieldsWithPastConnectionInfo()
+
+        // Request permission to access the microphone
+        TedPermission.with(applicationContext)
+                .setPermissionListener(permissionsListener)
+                .setDeniedMessage("We need microphone permissions to make things work!")
+                .setPermissions(Manifest.permission.RECORD_AUDIO)
+                .check()
     }
 
     /**

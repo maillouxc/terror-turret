@@ -14,16 +14,23 @@ import org.webrtc.IceCandidate
 import org.webrtc.SessionDescription
 import java.util.concurrent.TimeUnit
 
+/**
+ * Implements the WebRTC signalling protocol - but only the bits we need.
+ *
+ * The protocol is simple on the surface but can get annoyingly complex, and documentation is
+ * poor at best.
+ */
 class Signaller(
-        signallingProtocol: String = "wss",
+        signallingProtocol: String = "ws",
         signallingIp: String,
-        signallingPort: Int = 9000,
+        signallingPort: Int,
         private var signalHandler: WebRtcSignalHandler
 ) {
 
     interface WebRtcSignalHandler {
         fun onOfferReceived(offer: String)
         fun onIceCandidateReceived(iceCandidate: IceCandidate?)
+        fun onConnectionFailure(msg: String)
     }
 
     private var signallingWebSocket: WebSocket
@@ -45,6 +52,7 @@ class Signaller(
 
         override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
             Log.e(LOG_WEBRTC, "Signaller connection failure: $t")
+            signalHandler.onConnectionFailure("$t")
         }
 
     }
@@ -58,7 +66,7 @@ class Signaller(
                 .addInterceptor(loggingInterceptor)
                 .build()
 
-        val webSocketUrl = "$signallingProtocol://$signallingIp:$signallingPort/webrtc"
+        val webSocketUrl = "$signallingProtocol://$signallingIp:$signallingPort/stream/webrtc"
         Log.i(LOG_WEBRTC, "Attempting to connect to signalling server: $webSocketUrl")
         val webSocketRequest = Request.Builder()
                 .url(webSocketUrl)
