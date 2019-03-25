@@ -145,7 +145,7 @@ class Signaller(
     }
 
     companion object {
-        const val TIMEOUT_SECONDS = 10
+        const val TIMEOUT_SECONDS = 5
         const val WEBSOCKET_CLOSE_CODE_NORMAL = 1000
     }
 
