@@ -46,10 +46,10 @@ class TurretControlActivity : AppCompatActivity(),
             val useSSL = getBoolean(TurretConnectionActivity.PREF_LAST_SSL_USED, false)
 
             TurretConnection.init(
-                    turretIp = turretIp,
-                    turretPort = turretPort.toInt(),
-                    videoPort = videoPort.toInt(),
-                    turretPassword = password,
+                    turretIp = turretIp!!,
+                    turretPort = turretPort!!.toInt(),
+                    videoPort = videoPort!!.toInt(),
+                    turretPassword = password!!,
                     protocol = if (useSSL) "wss" else "ws",
                     turretConnectionStatusListener = this@TurretControlActivity
             )
@@ -174,7 +174,6 @@ class TurretControlActivity : AppCompatActivity(),
     }
 
     companion object {
-        // TODO update
         const val JOYSTICK_UPDATE_FREQ_HZ = 20
     }
 
