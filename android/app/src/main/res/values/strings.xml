@@ -16,16 +16,22 @@
 
     <!-- Form field labels -->
     <string name="field_password">Password</string>
-    <string name="field_turret_ip">Turret IP Address</string>
-    <string name="field_turret_port">Port</string>
+    <string name="field_turret_ip">Turret IP / URL</string>
+    <string name="field_turret_port">Turret Port</string>
+    <string name="field_video_port">Video Port</string>
     <string name="field_ssl">Use SSL</string>
 
     <!-- Form field validation error messages -->
     <string name="validation_error_required_field">Required</string>
 
     <!-- Toast contents -->
-    <string name="toast_error_connection_failed">Connection failed</string>
-    <string name="toast_error_video_stream_failed">Video stream failed</string>
+    <string name="toast_error_connection_failed">Connection failed!</string>
+    <string name="toast_error_video_stream_failed">Video stream failed!</string>
+    <string name="toast_error_signaller_connection_failed">Signaller connection failed!</string>
+    <string name="toast_error_turret_connection_failed">Turret connection failed!</string>
+
+    <!-- Permissions request reasons -->
+    <string name="permission_reason_microphone">We need microphone permissions to send your voice!</string>
 
     <!-- Uncategorized strings -->
     <string name="connect_to_turret">Connect to turret</string>

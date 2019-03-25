@@ -2,7 +2,6 @@ package edu.fgcu.scaryturret.network.webrtc
 
 import android.util.Log
 import com.google.gson.Gson
-import edu.fgcu.scaryturret.LoggerTags
 import edu.fgcu.scaryturret.LoggerTags.LOG_WEBRTC
 import edu.fgcu.scaryturret.network.webrtc.dtos.CallRequestOptionsDto
 import edu.fgcu.scaryturret.network.webrtc.dtos.SignallingMessageDto
@@ -19,6 +18,9 @@ import java.util.concurrent.TimeUnit
  *
  * The protocol is simple on the surface but can get annoyingly complex, and documentation is
  * poor at best.
+ *
+ * See the documentation in the individual methods of this class to gain more insight into how
+ * this all works.
  */
 class Signaller(
         signallingProtocol: String = "ws",
@@ -38,7 +40,7 @@ class Signaller(
     private val webSocketListener = object : WebSocketListener() {
 
         override fun onOpen(webSocket: WebSocket?, response: Response?) {
-            Log.d(LOG_WEBRTC, "Signaller connection opened.")
+            Log.i(LOG_WEBRTC, "Signaller connection opened.")
         }
 
         override fun onMessage(webSocket: WebSocket?, text: String?) {
@@ -47,7 +49,7 @@ class Signaller(
         }
 
         override fun onClosed(webSocket: WebSocket?, code: Int, reason: String?) {
-            Log.w(LOG_WEBRTC, "Signaller connection closed - reason: $reason")
+            Log.i(LOG_WEBRTC, "Signaller connection closed - reason: $reason")
         }
 
         override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
@@ -66,21 +68,26 @@ class Signaller(
                 .addInterceptor(loggingInterceptor)
                 .build()
 
+        // Connect to the UV4L signalling websocket
         val webSocketUrl = "$signallingProtocol://$signallingIp:$signallingPort/stream/webrtc"
         Log.i(LOG_WEBRTC, "Attempting to connect to signalling server: $webSocketUrl")
-        val webSocketRequest = Request.Builder()
-                .url(webSocketUrl)
-                .build()
-
+        val webSocketRequest = Request.Builder().url(webSocketUrl).build()
         signallingWebSocket = okHttpClient.newWebSocket(webSocketRequest, webSocketListener)
     }
 
+    /**
+     * Sends the request to begin a call to UV4L.
+     *
+     * Due to the way UV4L works, this is a little different than how WebRTC signalling
+     * normally works. Essentially, we send this message to ask UV4L to call us, since we can't
+     * directly call UV4L. UV4L should next respond with an "offer".
+     */
     fun sendCallRequest() {
         val callRequest = SignallingMessageDto(
                 what = "call",
                 data = Gson().toJson(
                         CallRequestOptionsDto(
-                                forceHwVcodec = false,
+                                forceHwVcodec = true,
                                 trickleIce = true
                         )
                 )
@@ -88,6 +95,10 @@ class Signaller(
         signallingWebSocket.send(Gson().toJson(callRequest))
     }
 
+    /**
+     * When UV4L sends a call offer, we need to respond with an answer containing our local
+     * session description.
+     */
     fun sendAnswer(sessionDescription: SessionDescription) {
         try {
             val obj = JSONObject()
@@ -98,11 +109,10 @@ class Signaller(
             wrapper.put("what", "answer")
             wrapper.put("data", obj.toString())
 
-            Log.d(LoggerTags.LOG_WEBRTC, "Sending answer: $wrapper")
-
+            Log.d(LOG_WEBRTC, "Sending answer: $wrapper")
             signallingWebSocket.send(wrapper.toString())
         } catch (ex: JSONException) {
-            Log.e(LoggerTags.LOG_WEBRTC, ex.toString())
+            Log.e(LOG_WEBRTC, ex.toString())
         }
     }
 

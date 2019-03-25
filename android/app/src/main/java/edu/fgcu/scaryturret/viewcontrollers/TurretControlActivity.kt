@@ -5,8 +5,6 @@ import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
-import android.os.Message
 import android.util.Log
 import android.view.MotionEvent
 import android.view.WindowManager
@@ -29,15 +27,12 @@ class TurretControlActivity : AppCompatActivity(),
         setContentView(R.layout.activity_turret_control)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+        webRtcConnectionManager = WebRtcConnectionManager(this, this)
+        beginStreamingVideo()
+
         registerClickListeners()
         registerJoystickMovementListener()
         onClickArmSwitch(false)
-    }
-
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-        webRtcConnectionManager = WebRtcConnectionManager(this, this)
-        beginStreamingVideo()
     }
 
     override fun onDestroy() {
@@ -50,7 +45,7 @@ class TurretControlActivity : AppCompatActivity(),
 
         val webRtcProtocol = TurretConnection.protocol
         val webRtcIp = TurretConnection.turretIp
-        val webRtcPort = TurretConnection.turretPort
+        val webRtcPort = TurretConnection.videoPort
 
         try {
             webRtcConnectionManager.connect(webRtcProtocol, webRtcIp, webRtcPort)
@@ -85,7 +80,7 @@ class TurretControlActivity : AppCompatActivity(),
      */
     override fun onSignallingConnectionFailed(msg: String) {
         runOnUiThread {
-            toast("Signalling connection failed")
+            toast(getString(R.string.toast_error_signaller_connection_failed))
             finish()
         }
     }

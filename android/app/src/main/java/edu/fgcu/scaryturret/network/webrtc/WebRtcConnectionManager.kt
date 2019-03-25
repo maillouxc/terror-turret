@@ -7,7 +7,9 @@ import org.json.JSONObject
 import org.webrtc.*
 import edu.fgcu.scaryturret.LoggerTags.LOG_WEBRTC
 
-
+/**
+ * This class is responsible for handling the WebRTC connection to the turret.
+ */
 class WebRtcConnectionManager(
         private val appContext: Context,
         private val webRtcStreamReceiver: WebRtcStreamReceiver
@@ -57,6 +59,9 @@ class WebRtcConnectionManager(
         }
     }
 
+    /**
+     * Sends a message to UV4L requesting that it calls us - just a weird quirk of how UV4L works.
+     */
     fun connect(signallingProtocol: String, signallingIp: String, signallingPort: Int) {
         signaller = Signaller(signallingProtocol, signallingIp, signallingPort, signalHandler = this)
         createPeerConnection()
