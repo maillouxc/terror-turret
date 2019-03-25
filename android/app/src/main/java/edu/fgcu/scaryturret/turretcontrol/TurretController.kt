@@ -1,4 +1,4 @@
-package edu.fgcu.scaryturret.applogic
+package edu.fgcu.scaryturret.turretcontrol
 
 import android.util.Log
 import edu.fgcu.scaryturret.LoggerTags.LOG_TURRET_CONTROL

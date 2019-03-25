@@ -5,20 +5,14 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.os.Vibrator
-import android.util.Log
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
-import edu.fgcu.scaryturret.LoggerTags.LOG_PI_CONNECTION
 import edu.fgcu.scaryturret.R
-import edu.fgcu.scaryturret.network.TurretConnection
 import edu.fgcu.scaryturret.utils.shake
-import edu.fgcu.scaryturret.utils.toast
 import kotlinx.android.synthetic.main.activity_turret_connection.*
 
-class TurretConnectionActivity : AppCompatActivity(),
-        TurretConnection.TurretConnectionStatusListener {
+class TurretConnectionActivity : AppCompatActivity() {
 
     /**
      * Used to handle permission request responses.
@@ -26,7 +20,8 @@ class TurretConnectionActivity : AppCompatActivity(),
     private var permissionsListener: PermissionListener = object : PermissionListener {
         override fun onPermissionGranted() {
             // We're now good to connect - we have the needed permissions
-            connect()
+            saveConnectionInfo()
+            goToTurretControlActivity()
         }
 
         override fun onPermissionDenied(deniedPermissions: List<String>) {}
@@ -37,16 +32,6 @@ class TurretConnectionActivity : AppCompatActivity(),
         setContentView(R.layout.activity_turret_connection)
         connect_button.setOnClickListener { onClickConnect() }
         prefillFieldsWithPastConnectionInfo()
-    }
-
-    /**
-     * Called when the connection to the turret control websocket fails.
-     */
-    override fun onConnectionFailed(msg: String) {
-        runOnUiThread {
-            toast(R.string.toast_error_turret_connection_failed)
-            Handler().postDelayed({finish()}, 1000)
-        }
     }
 
     /**
@@ -75,7 +60,7 @@ class TurretConnectionActivity : AppCompatActivity(),
      * preferences so that it can be used to prefill the form later.
      */
     private fun saveConnectionInfo() {
-        val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("connection_preferences", 0)
         with (sharedPreferences.edit()) {
             val ip = field_turret_ip.text.toString()
             val turretPort =  field_turret_port.text.toString()
@@ -93,31 +78,13 @@ class TurretConnectionActivity : AppCompatActivity(),
     }
 
     private fun onClickConnect() {
-        // We request the needed permissions - if they are successful, then we connect
-        TedPermission.with(applicationContext)
-                .setPermissionListener(permissionsListener)
-                .setDeniedMessage(getString(R.string.permission_reason_microphone))
-                .setPermissions(Manifest.permission.RECORD_AUDIO)
-                .check()
-    }
-
-    private fun connect() {
         if (validateConnectionInfo()) {
-            try {
-                TurretConnection.init(
-                        turretIp = field_turret_ip.text.toString(),
-                        turretPort = field_turret_port.text.toString().toInt(),
-                        videoPort = field_video_port.text.toString().toInt(),
-                        turretPassword = field_turret_password.text.toString(),
-                        protocol = if (field_ssl.isChecked) "wss" else "ws",
-                        turretConnectionStatusListener = this
-                )
-                onConnected()
-            } catch (ex: Exception) {
-                toast(R.string.toast_error_connection_failed)
-                Log.e(LOG_PI_CONNECTION, ex.toString())
-                return
-            }
+            // We request the needed permissions - if they are successful, then we connect
+            TedPermission.with(applicationContext)
+                    .setPermissionListener(permissionsListener)
+                    .setDeniedMessage(getString(R.string.permission_reason_microphone))
+                    .setPermissions(Manifest.permission.RECORD_AUDIO)
+                    .check()
         }
     }
 
@@ -129,6 +96,8 @@ class TurretConnectionActivity : AppCompatActivity(),
      *
      * While it would be nice to have a robust form validation library, it would really be overkill
      * for a simple app like this.
+     *
+     * Note that this function does NOT check whether the credentials provided are correct!
      */
     private fun validateConnectionInfo(): Boolean {
         // Clear any existing errors
@@ -168,22 +137,17 @@ class TurretConnectionActivity : AppCompatActivity(),
         return valid
     }
 
-    private fun onConnected() {
-        saveConnectionInfo()
-        goToTurretControlActivity()
-    }
-
     private fun goToTurretControlActivity() {
         val turretControlIntent = Intent(this, TurretControlActivity::class.java)
         startActivity(turretControlIntent)
     }
 
     companion object {
-        private const val PREF_LAST_IP_USED = "PREF_LAST_IP_USED"
-        private const val PREF_LAST_TURRET_PORT_USED = "PREF_LAST_TURRET_PORT_USED"
-        private const val PREF_LAST_VIDEO_PORT_USED = "PREF_LAST_VIDEO_PORT_USED"
-        private const val PREF_LAST_PASSWORD_USED = "PREF_LAST_PASSWORD_USED"
-        private const val PREF_LAST_SSL_USED = "PREF_LAST_SSL_USED"
+        const val PREF_LAST_IP_USED = "PREF_LAST_IP_USED"
+        const val PREF_LAST_TURRET_PORT_USED = "PREF_LAST_TURRET_PORT_USED"
+        const val PREF_LAST_VIDEO_PORT_USED = "PREF_LAST_VIDEO_PORT_USED"
+        const val PREF_LAST_PASSWORD_USED = "PREF_LAST_PASSWORD_USED"
+        const val PREF_LAST_SSL_USED = "PREF_LAST_SSL_USED"
     }
 
 }

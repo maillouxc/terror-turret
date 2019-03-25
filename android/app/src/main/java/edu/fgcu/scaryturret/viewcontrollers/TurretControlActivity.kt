@@ -4,13 +4,12 @@ import android.content.Context
 import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.WindowManager
 import edu.fgcu.scaryturret.LoggerTags.LOG_WEBRTC
 import edu.fgcu.scaryturret.R
-import edu.fgcu.scaryturret.applogic.TurretController
+import edu.fgcu.scaryturret.turretcontrol.TurretController
 import edu.fgcu.scaryturret.network.TurretConnection
 import edu.fgcu.scaryturret.network.webrtc.WebRtcConnectionManager
 import edu.fgcu.scaryturret.utils.toast
@@ -18,7 +17,8 @@ import kotlinx.android.synthetic.main.activity_turret_control.*
 import org.webrtc.*
 
 class TurretControlActivity : AppCompatActivity(),
-        WebRtcConnectionManager.WebRtcStreamReceiver {
+        WebRtcConnectionManager.WebRtcStreamReceiver,
+        TurretConnection.TurretConnectionStatusListener {
 
     private lateinit var webRtcConnectionManager: WebRtcConnectionManager
 
@@ -27,12 +27,43 @@ class TurretControlActivity : AppCompatActivity(),
         setContentView(R.layout.activity_turret_control)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+        beginTurretConnection()
         webRtcConnectionManager = WebRtcConnectionManager(this, this)
         beginStreamingVideo()
 
         registerClickListeners()
         registerJoystickMovementListener()
         onClickArmSwitch(false)
+    }
+
+    private fun beginTurretConnection() {
+        val sharedPreferences = getSharedPreferences("connection_preferences", 0)
+        with (sharedPreferences) {
+            val turretIp = getString(TurretConnectionActivity.PREF_LAST_IP_USED, "")
+            val turretPort = getString(TurretConnectionActivity.PREF_LAST_TURRET_PORT_USED, "")
+            val videoPort = getString(TurretConnectionActivity.PREF_LAST_VIDEO_PORT_USED, "")
+            val password = getString(TurretConnectionActivity.PREF_LAST_PASSWORD_USED, "")
+            val useSSL = getBoolean(TurretConnectionActivity.PREF_LAST_SSL_USED, false)
+
+            TurretConnection.init(
+                    turretIp = turretIp,
+                    turretPort = turretPort.toInt(),
+                    videoPort = videoPort.toInt(),
+                    turretPassword = password,
+                    protocol = if (useSSL) "wss" else "ws",
+                    turretConnectionStatusListener = this@TurretControlActivity
+            )
+        }
+    }
+
+    /**
+     * Called when the connection to the turret control websocket fails.
+     */
+    override fun onConnectionFailed(msg: String) {
+        runOnUiThread {
+            toast(R.string.toast_error_turret_connection_failed)
+            finish()
+        }
     }
 
     override fun onDestroy() {
@@ -47,13 +78,7 @@ class TurretControlActivity : AppCompatActivity(),
         val webRtcIp = TurretConnection.turretIp
         val webRtcPort = TurretConnection.videoPort
 
-        try {
-            webRtcConnectionManager.connect(webRtcProtocol, webRtcIp, webRtcPort)
-        } catch (ex: Exception) {
-            toast(R.string.toast_error_video_stream_failed)
-            Log.e(LOG_WEBRTC, ex.toString())
-            Handler().postDelayed({ finish() }, 400)
-        }
+        webRtcConnectionManager.connect(webRtcProtocol, webRtcIp, webRtcPort)
 
         enableSpeakerphone()
     }
@@ -150,7 +175,7 @@ class TurretControlActivity : AppCompatActivity(),
 
     companion object {
         // TODO update
-        const val JOYSTICK_UPDATE_FREQ_HZ = 10
+        const val JOYSTICK_UPDATE_FREQ_HZ = 20
     }
 
 }
