@@ -12,8 +12,8 @@ sleep 3
 # Start UV4L video streaming server
 echo "Starting UV4L server on port 9000..."
 uv4l --driver uvc \
-	--config-file "./uv4l-config.conf" \
-	--driver-config-file "uv4l-config.conf"
+	--config-file "/home/pi/code/terror-turret/pi/uv4l-config.conf" \
+	--driver-config-file "/home/pi/code/terror-turret/pi/uv4l-config.conf"
 
 echo -e "\nTurret stream *should* be up and running!\n"
 
@@ -22,5 +22,5 @@ echo "It can sometimes help to run this script again in that case."
 
 # Start the turret control software
 echo -e "\nStarting turret control software on port 9001...\n"
-python3 rpi-turret-manager.py
+python3 /home/pi/code/terror-turret/pi/rpi-turret-manager.py
 echo "Both services *should* be now up and running!"
