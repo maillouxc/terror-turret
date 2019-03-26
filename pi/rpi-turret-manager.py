@@ -3,15 +3,13 @@
 # This Python program is the main Rpi control program for the turret
 
 
+import os
 import sys
 import argparse
 import serial
 import serial.tools.list_ports
 from threading import Thread
-import wave
-import time
 from time import sleep
-import pymedia.audio.sound as sound
 import colorama
 from colorama import Fore
 from colorama import Style
@@ -187,14 +185,8 @@ def play_shotgun_racking_sound():
     play_sound('shotgun_racking.wav')
 
 
-def play_sound(wav_file_name):
-    f = wave.open(wav_file_name, 'rb')
-    sample_rate = f.getframerate()
-    channels = f.getnchannels()
-    format = sound.AFMT_S16_LE
-    sound = sound.Output(sample_rate, channels, format)
-    s = f.readframes(3000000)
-    sound.play()
+def play_sound(file_name):
+    os.system.(f'omxplayer {file_name}')
 
 
 def crash(reason):
