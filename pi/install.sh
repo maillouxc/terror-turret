@@ -52,27 +52,18 @@ then
   exiterror "This script must be run as root. Please re-run with sudo."
 fi
 
-echo "Installing needed packages..."
+echo "Installing and updating needed packages..."
 sudo apt-get update || exiterror "Failed to run apt-get update."
 sudo apt-get upgrade || exiterror "Failed to run apt-get upgrade."
-echo "Installing Arduino IDE..."
-sudo apt-get install arduino || exiterror
-echo "Installing Git..."
+echo "Installing Git if not already present..."
 sudo apt-get install git || exiterror
-echo "Installing Vim..."
-sudo apt-get install vim || exiterror
-echo "Installing fswebcam..."
-sudo apt-get install fswebcam || exiterror
 
 echo -e "\nInstalling pip package manager for Python..."
 sudo apt-get install python-pip || exiterror
 echo "Installing needed Python packages..."
-echo "Installing pyserial..."
-sudo pip3 install pyserial || exiterror
-echo "Installing colorama for Python..."
-sudo pip3 install colorama || exiterror
-echo "Installing SimpleWebsocketServer for Python..."
-sudo pip3 install git+https://github.com/dpallot/simple-websocket-server.git || exiterror
+sudo pip3 install pyserial || exiterror "Unable to install pyserial!"
+sudo pip3 install colorama || exiterror "Unable to install colorama!"
+sudo pip3 install git+https://github.com/dpallot/simple-websocket-server.git || exiterror "Unable to install simplewebsocketserver!"
 
 echo -e "\nInstalling UV4L..."
 curl http://www.linux-projects.org/listing/uv4l_repo/lpkey.asc | sudo apt-key add -
@@ -91,8 +82,11 @@ sudo apt-get install uv4l-uvc || exiterror
 
 echo -e "Finished installing all needed packages.\n"
 
-echo -e "\n Cloning project code from github..."
+echo -e "\nCloning project code from github..."
 sudo mkdir -p code
 sudo git clone https://www.github.com/maillouxc/terror-turret.git ./code/terror-turret
+
+echo -e "\nYou need to edit rc.local to run the installed program on boot...\n"
+echo "We can\'t easily do this for you, sorry..."
 
 success
