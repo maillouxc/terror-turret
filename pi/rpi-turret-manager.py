@@ -182,7 +182,7 @@ def init_incoming_commands_server():
 
 
 def play_shotgun_racking_sound():
-    play_sound('shotgun_racking.wav')
+    play_sound('/home/pi/code/terror-turret/pi/shotgun_racking.wav')
 
 
 def play_sound(file_name):
