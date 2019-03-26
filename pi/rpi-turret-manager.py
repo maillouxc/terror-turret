@@ -186,7 +186,7 @@ def play_shotgun_racking_sound():
 
 
 def play_sound(file_name):
-    os.system.(f'omxplayer {file_name}')
+    os.system(f'omxplayer {file_name}')
 
 
 def crash(reason):
