@@ -63,7 +63,7 @@ sudo apt-get install python-pip || exiterror
 echo "Installing needed Python packages..."
 sudo pip3 install pyserial || exiterror "Unable to install pyserial!"
 sudo pip3 install colorama || exiterror "Unable to install colorama!"
-sudo pip3 install git+https://github.com/dpallot/simple-websocket-server.git || exiterror "Unable to install simplewebsocketserver!"
+sudo pip3 install simplewebsocketserver || exiterror "Unable to install simplewebsocketserver!"
 
 echo -e "\nInstalling UV4L..."
 curl http://www.linux-projects.org/listing/uv4l_repo/lpkey.asc | sudo apt-key add -

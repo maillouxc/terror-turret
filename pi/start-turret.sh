@@ -22,5 +22,5 @@ echo "It can sometimes help to run this script again in that case."
 
 # Start the turret control software
 echo -e "\nStarting turret control software on port 9001...\n"
-python3 /home/pi/code/terror-turret/pi/rpi-turret-manager.py
+sudo python3 /home/pi/code/terror-turret/pi/rpi-turret-manager.py
 echo "Both services *should* be now up and running!"
