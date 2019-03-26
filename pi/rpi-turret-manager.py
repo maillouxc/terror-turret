@@ -2,7 +2,6 @@
 
 # This Python program is the main Rpi control program for the turret
 
-# TODO - a modularizing refactor of this program - this is a temp hacky mess
 
 import sys
 import argparse
@@ -15,6 +14,7 @@ from colorama import Fore
 from colorama import Style
 from SimpleWebSocketServer import SimpleWebSocketServer
 from SimpleWebSocketServer import WebSocket
+
 
 CMD_FIRE = 0x21
 CMD_STOP_FIRE = 0x22
@@ -55,7 +55,6 @@ def main():
         exit(0)
 
     initIncomingCommandsServer()
-    
     cleanup()
     exit(0)
 
@@ -71,14 +70,14 @@ def parseCommandLineArguments():
         help = "Runs the test script instead of normal program")
     parser.add_argument(
         '--serial-port',
-        default = 'COM1',
+        default = '/dev/ttyUSB0',
         dest = 'serialPort',
         help = "The name of the serial port to connect from.")
-
-    # It pains me to use 'global' here - we need to refactor this when we can
     parsedArgs = parser.parse_args()
+
     global testMode
     testMode = parsedArgs.testMode
+
     global turretSerialPort
     turretSerialPort = parsedArgs.serialPort
 
@@ -99,12 +98,9 @@ def establishConnectionToTurret():
         print(str(port))
     print("")
 
-    # TODO we need a way to programatically determine which port the turret is on
-    # We'll have to use some sort of negotation, ping each port and listen for correct response
-
     print("Attempting to connect to turret on " + turretSerialPort + "...")
     try:
-        # The serial port takes some time to init 
+        # The serial port takes some time to init
         arduinoSerialConn.baudrate = SERIAL_BAUD_RATE
         arduinoSerialConn.port = turretSerialPort
         arduinoSerialConn.timeout = 2
@@ -119,7 +115,7 @@ def establishConnectionToTurret():
 def commandTurret(command):
     print("Sending command: " + hex(command))
     arduinoSerialConn.write(chr(command).encode())
-    
+
 
 def testTurretCommands():
     print("\nInitiating turret commands test...\n")
@@ -169,15 +165,12 @@ def testTurretCommands():
     print("Turning safety back on")
     commandTurret(CMD_SAFETY_ON)
     sleep(2)
-    
-    print("Test complete.")
+
+    print("Test complete. Exiting program.")
 
 
 def initIncomingCommandsServer():
     global commandServer
-
-    # TODO determine the port to use dynamically
-    # TODO decide how to deconflict this port from the video stream port
     print("Initializing incoming commands server...\n")
     port = 9001
     commandServer = SimpleWebSocketServer('', port, TurretCommandServer)
@@ -189,12 +182,10 @@ def crash(reason):
     colorama.deinit()
     exit(1)
 
-    
-    
 
 def SerialLoggingThread():
     print("Beginning turret output logging...\n")
-    while(not exiting):
+    while not exiting :
         if arduinoSerialConn.isOpen():
             turretOutput = str(arduinoSerialConn.readline(), "utf-8")
             if turretOutput != "":
@@ -202,11 +193,9 @@ def SerialLoggingThread():
         else:
             return
 
-        
-        
 
 class TurretCommandServer(WebSocket):
-    
+
     IN_CMD_FIRE = "FIRE"
     IN_CMD_CEASE_FIRE = "CEASE FIRE"
     IN_CMD_SAFETY_ON = "SAFETY ON"
@@ -247,10 +236,6 @@ class TurretCommandServer(WebSocket):
         else:
             print("Unrecognized command received: " + str(command))
 
-            
-            
 
 if __name__ == "__main__":
     main()
-
-
