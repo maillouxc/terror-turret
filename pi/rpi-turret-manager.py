@@ -216,17 +216,17 @@ class TurretCommandServer(WebSocket):
     IN_CMD_PITCH = "PITCH SPEED"
 
 
-    def handle_message(self):
+    def handleMessage(self):
         incoming_command = self.data
         print("Incoming command: " + incoming_command)
         self.process_incoming_command(incoming_command)
 
 
-    def handle_connected(self):
+    def handleConnected(self):
         print("Client connected to command server.")
 
 
-    def handle_close(self):
+    def handleClose(self):
         print("Closing websocket server...")
 
 
