@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,17 +13,19 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Switch
         android:id="@+id/arm_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
         android:showText="true"
         android:textOff="@string/safety_on"
         android:textOn="@string/safety_off"
@@ -38,9 +39,9 @@
         android:id="@+id/fire_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/fire_button"
         android:text="@string/btn_fire"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -48,38 +49,65 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <io.github.controlwear.virtual.joystick.android.JoystickView
-        xmlns:custom="http://schemas.android.com/apk/res-auto"
+    <io.github.controlwear.virtual.joystick.android.JoystickView xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:id="@+id/analog_stick"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="0dp"
         android:layout_marginTop="8dp"
         android:alpha="0.5"
-        custom:JV_buttonSizeRatio="15%"
-        custom:JV_borderColor="@color/white"
-        custom:JV_borderWidth="4dp"
-        custom:JV_backgroundColor="@color/colorPrimaryLight"
-        custom:JV_fixedCenter="true"
-        custom:JV_buttonColor="@color/blackDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"/>
+        app:layout_constraintVertical_bias="1.0"
+        custom:JV_backgroundColor="@color/colorPrimaryLight"
+        custom:JV_borderColor="@color/white"
+        custom:JV_borderWidth="4dp"
+        custom:JV_buttonColor="@color/blackDark"
+        custom:JV_buttonSizeRatio="15%"
+        custom:JV_fixedCenter="true" />
 
     <ImageView
         android:id="@+id/crosshair"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/video_view"
         app:layout_constraintEnd_toEndOf="@+id/video_view"
         app:layout_constraintStart_toStartOf="@+id/video_view"
         app:layout_constraintTop_toTopOf="@+id/video_view"
-        app:srcCompat="@drawable/crosshair" />
+        app:srcCompat="@drawable/crosshair"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@mipmap/ic_launcher_round" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@mipmap/ic_launcher_round" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
