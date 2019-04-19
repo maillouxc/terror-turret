@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-# This Python program is the main Rpi control program for the turret
-
+# Python server to manage the turret
 
 import os
 import sys
@@ -13,8 +12,17 @@ from time import sleep
 import colorama
 from colorama import Fore
 from colorama import Style
-from SimpleWebSocketServer import SimpleWebSocketServer
 from SimpleWebSocketServer import WebSocket
+
+if os.path.isfile("/etc/terror-turret/turretManagerConfig.py"):
+    sys.path.append("/etc/terror-turret")
+from turretManagerConfig import TURRET_CONFIG
+
+# no SSL support or yes SSL support...
+if (TURRET_CONFIG['useSSL'] is False):
+    from SimpleWebSocketServer import SimpleWebSocketServer
+else:
+    from SimpleWebSocketServer import SimpleSSLWebSocketServer
 
 
 CMD_FIRE = 0x21
