@@ -10,7 +10,7 @@ sudo /usr/bin/pkill uv4l
 sleep 3
 
 # Start UV4L video streaming server
-echo "Starting UV4L server on port 9000..."
+echo "Starting UV4L server on port 9002..."
 uv4l --driver uvc \
 	--config-file "/home/pi/code/terror-turret/pi/uv4l-config.conf" \
 	--driver-config-file "/home/pi/code/terror-turret/pi/uv4l-config.conf"
